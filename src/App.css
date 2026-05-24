@@ -1,0 +1,35 @@
+*{
+  box-sizing: border-box;
+  padding: 0;
+  margin: 0;
+
+  --root-theme-light:rgb(208, 208, 208);
+  --root-theme-light-text:rgb(0, 0, 0);
+  --root-theme-light-dark:rgb(88, 88, 88);
+  --root-theme-light-light:white;
+
+  --root-theme-dark:rgb(24, 24, 24);
+  --root-theme-dark-text:rgb(255, 255, 255);
+  --root-theme-dark-light:rgb(63, 63, 63);
+  --root-theme-dark-dark:rgb(0, 0, 0);
+}
+
+.light{
+  --theme:var(--root-theme-light);
+  --theme-text:var(--root-theme-light-text);
+  --theme-light:var(--root-theme-light-dark);
+  --theme-deep:var(--root-theme-light-light);
+}
+.dark{
+  --theme:var(--root-theme-dark);
+  --theme-text:var(--root-theme-dark-text);
+  --theme-light:var(--root-theme-dark-light);
+  --theme-deep:var(--root-theme-dark-dark);
+}
+
+.app{
+  width: 100dvw;
+  min-height: 100dvh;
+  background-color: var(--theme);
+  color:var(--theme-text)
+}

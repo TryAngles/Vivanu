@@ -1,0 +1,7 @@
+.navbar{
+    width: 100%;
+    background-color: var(--theme-deep);
+    padding: 10px;
+    text-transform: uppercase;
+    font-weight: 700;
+}

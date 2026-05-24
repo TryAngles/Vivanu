@@ -1,0 +1,27 @@
+.Featured{
+    width: 100%;
+    padding: 10px 0;
+    overflow-y: auto;
+}
+.Featured::-webkit-scrollbar{
+    display: none;
+}
+.posterList{
+    display: flex;
+    flex-direction: row;
+    min-width: 0;
+    min-height: 100%;
+}
+.poster{
+    min-width: 70dvw;
+    background-color: var(--theme-deep);
+    margin: 10px;
+    aspect-ratio: 16 / 9;
+    border-radius: 20px;
+    overflow: hidden;
+    box-shadow: 0 0 10px 0px var(--theme-light);
+}
+.poster img{
+    filter:blur(6px);
+    transform: scale(1.1);
+}
