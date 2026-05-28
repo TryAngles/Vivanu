@@ -3,7 +3,7 @@
   padding: 0;
   margin: 0;
 
-  --root-theme-light:rgb(208, 208, 208);
+  --root-theme-light:rgb(245, 245, 245);
   --root-theme-light-text:rgb(0, 0, 0);
   --root-theme-light-dark:rgb(88, 88, 88);
   --root-theme-light-light:white;
@@ -12,6 +12,15 @@
   --root-theme-dark-text:rgb(255, 255, 255);
   --root-theme-dark-light:rgb(63, 63, 63);
   --root-theme-dark-dark:rgb(0, 0, 0);
+
+  --root-theme: #d9b061;
+
+  --body-width: 425px;
+}
+@media (max-width:425px) {
+  *{
+    --body-width:100dvw;
+  }
 }
 
 .light{
@@ -26,10 +35,27 @@
   --theme-light:var(--root-theme-dark-light);
   --theme-deep:var(--root-theme-dark-dark);
 }
-
+.body{
+  overflow-x: hidden;
+}
 .app{
-  width: 100dvw;
+  width: 100%;
   min-height: 100dvh;
   background-color: var(--theme);
-  color:var(--theme-text)
+  color:var(--theme-text);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  font-family: -apple-system,BlinkMacSystemFont,Segoe UI,Roboto,Oxygen,Ubuntu,Cantarell,Fira Sans,Droid Sans,Helvetica Neue,sans-serif;
+}
+
+.container{
+  max-width: var(--body-width);
+
+}
+
+.icon{
+  fill: var(--color);
+  width: 100%;
+  height: 100%;
 }

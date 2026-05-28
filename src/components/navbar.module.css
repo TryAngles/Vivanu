@@ -1,7 +1,18 @@
 .navbar{
-    width: 100%;
+    max-width: var(--body-width);
+    width: calc(100% - 20px);
     background-color: var(--theme-deep);
     padding: 10px;
     text-transform: uppercase;
     font-weight: 700;
+    position: fixed;
+    z-index: 10;
+    border-radius: 10px;
+    left: 50%;
+    top: 10px;
+    transform: translate(-50%,0);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 0 30px -10px var(--root-theme);
 }
