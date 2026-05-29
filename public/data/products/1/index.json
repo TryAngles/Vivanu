@@ -1,0 +1,122 @@
+{
+  "id": "1",
+  "type": "cosmetic",
+
+  "brand": {
+    "name": "Maybelline",
+    "country": "USA"
+  },
+
+  "title": "Maybelline Fit Me Matte + Poreless Liquid Foundation",
+  "shortTitle": "Fit Me Matte Foundation",
+
+  "description": {
+    "short": "Lightweight matte liquid foundation for normal to oily skin.",
+    
+    "full": "Maybelline Fit Me Matte + Poreless Foundation delivers a natural matte finish while minimizing pores and controlling shine throughout the day. Its lightweight texture blends smoothly into the skin and provides medium buildable coverage suitable for daily wear.",
+
+    "bulletPoints": [
+      "Natural matte finish",
+      "Oil control formula",
+      "Buildable medium coverage",
+      "Non-comedogenic",
+      "Suitable for daily use"
+    ]
+  },
+
+  "pricing": {
+    "currency": "INR",
+    "mrp": 699,
+    "sellingPrice": 549,
+    "discountPercent": 21,
+    "taxIncluded": true
+  },
+
+  "stock": {
+    "available": true
+  },
+
+  "media": {
+    "thumbnail": {
+      "src": "/thumb.jpg",
+      "alt": "Maybelline Fit Me Foundation Thumbnail"
+    },
+
+    "wide":{
+        "src":"/wide.webp",
+        "alt":"full view"
+    },
+
+    "gallery": [
+      {
+        "type": "image",
+        "src": "1.jpg",
+        "alt": "Front View"
+      },
+      {
+        "type": "image",
+        "src": "2.jpg",
+        "alt": "Back View"
+      }
+    ]
+  },
+
+  "shipping": {
+    "weight": "120g",
+    "dimensions": {
+      "length": "12cm",
+      "width": "4cm",
+      "height": "3cm"
+    },
+    "returnable": true,
+    "returnWindowDays": 7
+  },
+
+  "timestamps": {
+    "createdAt": "2026-05-20T10:12:00Z",
+    "updatedAt": "2026-05-27T16:48:00Z"
+  },
+
+  "Attribute": [
+    {
+      "label": "Brand",
+      "value": "Maybelline",
+      "priority":10
+    },
+    {
+      "label": "Skin Type",
+      "value": "Normal to Oily",
+      "priority":10
+    },
+    {
+      "label": "Finish",
+      "value": "Matte",
+      "priority":10
+    },
+    {
+      "label": "Coverage",
+      "value": "Medium",
+      "priority":10
+    },
+    {
+      "label": "Product Form",
+      "value": "Liquid",
+      "priority":10
+    },
+    {
+      "label": "Net Quantity",
+      "value": "30ml",
+      "priority":10
+    },
+    {
+      "label": "Country of Origin",
+      "value": "India",
+      "priority":10
+    },
+    {
+      "label": "Expiry",
+      "value": "36 Months",
+      "priority":10
+    }
+  ]
+}

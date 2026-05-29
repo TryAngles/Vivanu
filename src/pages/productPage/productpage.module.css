@@ -19,6 +19,7 @@
 }
 .productBox .thumbnail{
     max-width: 100px;
+    width: 100px;
     aspect-ratio: 1 /1;
     border-radius: 10px;
     overflow: hidden;
@@ -52,9 +53,11 @@
     border: 1px solid var(--root-theme);
     transition: 0.1s;
     border-radius: 10px;
+    color: var(--theme-text)
 }
 .addToCart:hover{
     background-color: var(--root-theme);
+    color: black;
 }
 
 

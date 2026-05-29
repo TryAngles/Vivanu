@@ -3,6 +3,7 @@ import { useEffect, useMemo, useState } from "react"
 
 import { Image } from "../../components/micro/media"
 import CellLayoutEngine from "../../lib/layoutEngine"
+import Product from "../../lib/core/product.class"
 
 const WIDGETS = [
     {
@@ -40,8 +41,11 @@ const WIDGETS = [
         cols: 2
     }
 ]
-
-export default function FirstPage() {
+/**
+ * @param {Object} param0 
+ * @param {Product} param0.product 
+*/
+export default function FirstPage({ product }) {
 
     const [screen, setScreen] = useState({
         width: window.innerWidth,
@@ -163,7 +167,7 @@ export default function FirstPage() {
     return (<>
         <div className={`${Styles.FirstPage} ${Styles.Page}`}>
             <div className={Styles.wide}>
-                <Image src="/wide.jpg" />
+                <Image src={product.media.wide.src} base={product.media.base} />
             </div>
 
             <WidgetGrid layoutItems={layout[0].placed} grid={grid} />
