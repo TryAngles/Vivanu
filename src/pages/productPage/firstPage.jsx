@@ -85,8 +85,8 @@ const FirstPage = React.memo(() => {
     const { product, setIsExpanded, isExpanded } = useProduct();
     const closeBox = () => setIsExpanded(false);
     return (<>
-        <div className={`${Styles.FirstPage} ${Styles.Page}`}>
-            <div className={Styles.wide} onClick={closeBox}
+        <div className={`${Styles.FirstPage} ${Styles.Page}`} onClick={closeBox}>
+            <div className={Styles.wide}
                 style={{
                     opacity: isExpanded ? 0.5 : 1
                 }}>
@@ -98,7 +98,7 @@ const FirstPage = React.memo(() => {
         {
             layout.slice(1).map((lay) => {
                 return (
-                    <div className={Styles.Page} onClick={closeBox} style={{height:"100dvh"}}>
+                    <div className={Styles.Page} onClick={closeBox}>
                         <WidgetGrid layoutItems={lay.placed} grid={grid} />
                     </div>
                 )
@@ -106,7 +106,7 @@ const FirstPage = React.memo(() => {
         }
         
         {/* Render a single layout page container for the entire gallery collection */}
-        <div className={`${Styles.Page} onClick={closeBox} ${Styles.GalleryPage}`}>
+        <div className={`${Styles.Page} ${Styles.GalleryPage}`} onClick={closeBox}>
             <h2 className={Styles.GalleryTitle}>Product Gallery</h2>
 
             <div className={Styles.GalleryGrid}>

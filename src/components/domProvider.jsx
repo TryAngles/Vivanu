@@ -1,19 +1,64 @@
 import { createContext, useContext, useState, useMemo, useEffect } from "react";
 
-// 1. Create the context
 const DOMContext = createContext(null);
 
-// 2. Create the Provider component
-function DOMContextProvider({children}) {
-    const [isScrollUp,setIsScrollUp] = useState(false);
+function DOMContextProvider({ children, scrollRef }) {
+    const [isScrollUp, setIsScrollUp] = useState(false);
+    const [isScrollLocked, setIsScrollLocked] = useState(false);
 
-    useEffect(()=>
-        trackScroll(setIsScrollUp), 
-    [setIsScrollUp]);
+    useEffect(() => {
+        const scrollContainer = scrollRef?.current;
+        if (!scrollContainer) return;
 
-    // Optimize performance so components only re-render when state actually changes
-    const value = useMemo(() => ({
-        isScrollUp
+        if (isScrollLocked) {
+            // eslint-disable-next-line react-hooks/immutability
+            scrollContainer.style.overflowY = "hidden"; // Locks snap scroll
+        } else {
+            scrollContainer.style.overflowY = "auto";   // Restores snap scroll
+        }
+    }, [isScrollLocked, scrollRef]);
+
+    // Handle standard scroll tracking
+    useEffect(() => {
+        const scrollContainer = scrollRef?.current;
+        if (!scrollContainer || isScrollLocked) return; // Ignore tracking if locked
+
+        let lastScrollTop = 0;
+        let isTicking = false;
+
+        const handleScroll = () => {
+            const scrollTop = scrollContainer.scrollTop;
+            if (isTicking) return;
+            isTicking = true;
+
+            requestAnimationFrame(() => {
+                if (scrollTop < 0) { isTicking = false; return; }
+                if (scrollTop <= 50) {
+                    setIsScrollUp(false);
+                    lastScrollTop = scrollTop;
+                    isTicking = false;
+                    return;
+                }
+
+                const scrollDelta = scrollTop - lastScrollTop;
+                const threshold = 15;
+
+                if (Math.abs(scrollDelta) > threshold) {
+                    setIsScrollUp(scrollDelta > 0);
+                    lastScrollTop = scrollTop;
+                }
+                isTicking = false;
+            });
+        };
+
+        scrollContainer.addEventListener("scroll", handleScroll, { passive: true });
+        return () => scrollContainer.removeEventListener("scroll", handleScroll);
+    }, [scrollRef, isScrollLocked]);
+
+    // 3. EXPOSE: Expose the state setter function to the custom hook consumer
+    const value = useMemo(() => ({ 
+        isScrollUp, 
+        preventScroll: setIsScrollLocked 
     }), [isScrollUp]);
 
     return (
@@ -23,52 +68,11 @@ function DOMContextProvider({children}) {
     );
 }
 
-// 3. Create the custom consumer hook with an error check
 function useDOM() {
     const context = useContext(DOMContext);
-    
-    // Safety check: alerts you if you use the hook outside the Provider
-    if (!context) {
-        throw new Error("useDOM must be used within a DOMContextProvider");
-    }
-    
+    if (!context) throw new Error("useDOM must be used within a DOMContextProvider");
     return context;
 }
-
-const trackScroll = (setIsScrollUp) => {
-    // 1. Maintain a mutable reference of the last position to compare directions
-    let lastScrollTop = 0;
-
-    const handleScroll = () => {
-        const scrollTop = window.scrollY || document.documentElement.scrollTop;
-
-        // Prevent negative bounce values on iOS Safari platforms
-        if (scrollTop < 0) return;
-
-        // 2. Clear minimization at the absolute top of the page frame
-        if (scrollTop <= 50) {
-            setIsScrollUp(false);
-            lastScrollTop = scrollTop;
-            return;
-        }
-
-        // 3. Evaluate scroll vectors
-        if (scrollTop > lastScrollTop) {
-            // User is moving down (Into product content/gallery) -> Hide Panel
-            setIsScrollUp(true);
-        } else {
-            // User is pulling back up -> Proactively surface actions immediately
-            setIsScrollUp(false);
-        }
-
-        // Update tracking cursor position
-        lastScrollTop = scrollTop;
-    };
-
-    window.addEventListener("scroll", handleScroll, { passive: true });
-    return () => window.removeEventListener("scroll", handleScroll);
-};
-
 
 // eslint-disable-next-line react-refresh/only-export-components
 export { useDOM, DOMContextProvider };

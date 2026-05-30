@@ -1,18 +1,17 @@
-.navBox{
+.navBox {
     width: 100%;
     padding: 10px;
     position: sticky;
     z-index: 10;
-    top: 0;
+    top: 0; 
     display: flex;
     align-items: center;
     justify-content: center;
-    transition: .5s ease;
     pointer-events: none;
 }
-.navbar{
+.navbar {
     max-width: var(--body-width);
-    width: calc(100%);
+    width: 100%;
     background-color: var(--theme-deep);
     padding: 10px;
     text-transform: uppercase;
@@ -23,7 +22,11 @@
     justify-content: center;
     box-shadow: 0 0 30px -10px var(--root-theme);
     pointer-events: all;
+    will-change: transform;
+    transition: transform 0.4s cubic-bezier(0.25, 1, 0.5, 1);
 }
-.navBox.minimise{
-    top: -100%;
+
+
+.navBox.minimise .navbar {
+    transform: translateY(-200%); 
 }

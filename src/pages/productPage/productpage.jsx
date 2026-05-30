@@ -11,6 +11,7 @@ import LoadingPage from "../loading/loading";
 import { DownArrowIcon } from "../../components/micro/icon";
 import React from "react";
 import { ProductContextProvider, useProduct } from "./ProductContextProvider";
+import { useDOM } from "../../components/domProvider";
 
 
 export default function ProductPage() {
@@ -65,7 +66,13 @@ export default function ProductPage() {
 }
 
 const ProductMeta = React.memo(() => {
-    const { product, isExpanded, setIsExpanded, isScrollUp } = useProduct();
+    const { product, isExpanded, setIsExpanded} = useProduct();
+    const {isScrollUp,preventScroll} = useDOM()
+
+    useEffect(() => {
+        preventScroll(isExpanded);
+        return () => preventScroll(false);
+    }, [isExpanded, preventScroll]);
 
     console.log(product, product.media.base)
 

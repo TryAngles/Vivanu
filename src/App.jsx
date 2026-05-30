@@ -8,6 +8,7 @@ import ErrPage from './pages/fallback/ErrPage'
 import ErrorBoundary from './components/errorBoundary/errorBoundary'
 import { Footer } from './components/Footer/footer'
 import { DOMContextProvider } from './components/domProvider'
+import { useRef } from 'react'
 
 function App() {
 
@@ -20,18 +21,23 @@ function App() {
 }
 
 function AppLayout({ children }) {
+  const wrapperRef = useRef(null);
   return (
-    <DOMContextProvider>
-      <div className="app dark">
-        <ErrorBoundary>
-          <Navbar />
-          <Routes>
-            {children}
-            <Route path="*" element={<ErrPage status={404} message={"Page Not Found"} />} />
-          </Routes>
-          <BottomBar />
-          <Footer />
-        </ErrorBoundary>
+    <DOMContextProvider scrollRef={wrapperRef}>
+      <div id='DOM' className='dark'>
+        <div id='AppWapper' ref={wrapperRef}>
+          <div className="app">
+            <ErrorBoundary>
+              <Navbar />
+              <Routes>
+                {children}
+                <Route path="*" element={<ErrPage status={404} message={"Page Not Found"} />} />
+              </Routes>
+              <BottomBar />
+              <Footer />
+            </ErrorBoundary>
+          </div>
+        </div>
       </div>
     </DOMContextProvider>
   )

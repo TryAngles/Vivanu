@@ -1,69 +1,128 @@
-*{
+/* ==========================================
+   1. GLOBAL RESET & UTILITIES
+   ========================================== */
+* {
   box-sizing: border-box;
   padding: 0;
   margin: 0;
 
-  --root-theme-light:rgb(245, 245, 245);
-  --root-theme-light-text:rgb(0, 0, 0);
-  --root-theme-light-dark:rgb(88, 88, 88);
-  --root-theme-light-light:white;
+  /* Theme Configurations */
+  --root-theme-light: rgb(245, 245, 245);
+  --root-theme-light-text: rgb(0, 0, 0);
+  --root-theme-light-dark: rgb(88, 88, 88);
+  --root-theme-light-light: white;
 
-  --root-theme-dark:rgb(24, 24, 24);
-  --root-theme-dark-text:rgb(255, 255, 255);
-  --root-theme-dark-light:rgb(63, 63, 63);
-  --root-theme-dark-dark:rgb(0, 0, 0);
+  --root-theme-dark: rgb(24, 24, 24);
+  --root-theme-dark-text: rgb(255, 255, 255);
+  --root-theme-dark-light: rgb(63, 63, 63);
+  --root-theme-dark-dark: rgb(0, 0, 0);
 
   --root-theme: #d9b061;
-  --root-theme-green:rgb(115, 237, 115);
-  --root-theme-red:red;
+  --root-theme-green: rgb(115, 237, 115);
+  --root-theme-red: red;
 
   --body-width: 425px;
-  --content-height: calc(100dvh - 120px);
+  
+  /* FIXED: Dynamic theme calculation utilizing your sub-pixel rounding fix */
+  --content-height: calc((100svh - 1px) - 120px);
 }
-@media (max-width:425px) {
-  *{
-    --body-width:100dvw;
+
+@media (max-width: 425px) {
+  * {
+    --body-width: 100dvw;
   }
 }
 
-.light{
-  --theme:var(--root-theme-light);
-  --theme-text:var(--root-theme-light-text);
-  --theme-light:var(--root-theme-light-dark);
-  --theme-deep:var(--root-theme-light-light);
+/* ==========================================
+   2. THEMES & BASE LAYOUT
+   ========================================== */
+.light {
+  --theme: var(--root-theme-light);
+  --theme-text: var(--root-theme-light-text);
+  --theme-light: var(--root-theme-light-dark);
+  --theme-deep: var(--root-theme-light-light);
 }
-.dark{
-  --theme:var(--root-theme-dark);
-  --theme-text:var(--root-theme-dark-text);
-  --theme-light:var(--root-theme-dark-light);
-  --theme-deep:var(--root-theme-dark-dark);
+
+.dark {
+  --theme: var(--root-theme-dark);
+  --theme-text: var(--root-theme-dark-text);
+  --theme-light: var(--root-theme-dark-light);
+  --theme-deep: var(--root-theme-dark-dark);
 }
-.body{
-  overflow-x: hidden;
-}
-.app{
+
+/* FIXED: Prevent sub-pixel overflowing on the base document layer */
+html, 
+body {
   width: 100%;
-  min-height: 100dvh;
+  height: calc(100svh); 
+  overflow: hidden; 
   background-color: var(--theme);
-  color:var(--theme-text);
+}
+
+/* ==========================================
+   3. STRUCTURAL WRAPPERS (APP FRAME)
+   ========================================== */
+#DOM {
+  background-color: var(--theme);
+  width: 100%;
+  max-width: 100%;
+  height: calc(100vh); /* FIXED: Applied your 1px calculation strategy */
+  overflow: hidden; 
+}
+
+#AppWapper {
+  width: 100%;
+  height: calc(100svh - 1px);
+  max-height: calc(100svh - 1px);
+  position: absolute;
+  top: 0;
+  left: 0;
+  
+  overflow-y: auto;
+  scroll-snap-type: y mandatory; 
+  scroll-behavior: smooth;
+  -webkit-overflow-scrolling: touch; 
+  padding-top: env(safe-area-inset-top);
+  padding-bottom: env(safe-area-inset-bottom);
+  will-change: scroll-position;
+}
+
+/* Hide scrollbar for standard webkit layout setups */
+#AppWapper::-webkit-scrollbar {
+  display: none;
+}
+
+.app {
+  width: 100%;
+  min-height: 100%; 
+  background-color: var(--theme);
+  color: var(--theme-text);
   display: flex;
   flex-direction: column;
   align-items: center;
-  font-family: -apple-system,BlinkMacSystemFont,Segoe UI,Roboto,Oxygen,Ubuntu,Cantarell,Fira Sans,Droid Sans,Helvetica Neue,sans-serif;
+  font-family: -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Oxygen, Ubuntu, Cantarell, Fira Sans, Droid Sans, Helvetica Neue, sans-serif;
 }
 
-.container{
+/* ==========================================
+   4. ELEMENT STYLES
+   ========================================== */
+.container {
   max-width: var(--body-width);
 }
-.icon{
+
+.icon {
   --color: var(--theme-text);
   fill: var(--color);
   width: 100%;
   height: 100%;
 }
-.green, .green *{
-  --color:var(--root-theme-green);
+
+.green, 
+.green * {
+  --color: var(--root-theme-green);
 }
-.red, .red *{
-  --color:var(--root-theme-red);
+
+.red, 
+.red * {
+  --color: var(--root-theme-red);
 }
