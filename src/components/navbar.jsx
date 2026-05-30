@@ -1,25 +1,22 @@
 import { useNavigate } from "react-router"
 import NavbarStyles from "./navbar.module.css"
+import { useDOM } from "./domProvider"
 function Navbar() {
-  // const SpaceStyles = {
-  //   width: "100%",
-  //   height: "50px"
-  // }
-
+  
   const navigate = useNavigate()
+  const {isScrollUp} = useDOM();
 
-
-  const headingStyles={
+  const headingStyles = {
     opacity: 0.5
   }
-  return (<>
-  {/* <div style={SpaceStyles}></div> */}
-  <div className={NavbarStyles.navbar} onClick={()=>navigate("/")}>
-    <div style={headingStyles}>
-      vivanu
+  return (
+    <div className={`${NavbarStyles.navBox} ${isScrollUp?NavbarStyles.minimise:""}`}>
+      <div className={NavbarStyles.navbar} onClick={() => navigate("/")}>
+        <div style={headingStyles}>
+          vivanu
+        </div>
+      </div>
     </div>
-  </div>
-  </>
   )
 }
 

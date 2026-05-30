@@ -74,7 +74,7 @@ function Card() {
     return (<>
         <div className={Styles.card}>
             <div className={Styles.thumbnail}>
-                <Image src={`https://picsum.photos/100?random=${i++}`} />
+                <Image src={`https://picsum.photos/100?random=${i++}`}  />
             </div>
             <div className={Styles.metadata}>
                 <div className={Styles.name}>Lorem ipsum dolor sit amet.</div>

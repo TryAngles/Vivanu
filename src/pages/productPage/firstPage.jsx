@@ -1,9 +1,10 @@
 import Styles from "./firstPage.module.css"
-import { useEffect, useMemo, useState } from "react"
+import React, { useEffect, useMemo, useState } from "react"
 
 import { Image } from "../../components/micro/media"
 import CellLayoutEngine from "../../lib/layoutEngine"
-import Product from "../../lib/core/product.class"
+
+import { useProduct } from "./ProductContextProvider"
 
 const WIDGETS = [
     {
@@ -41,11 +42,8 @@ const WIDGETS = [
         cols: 2
     }
 ]
-/**
- * @param {Object} param0 
- * @param {Product} param0.product 
-*/
-export default function FirstPage({ product }) {
+
+const FirstPage = React.memo(() => {
 
     const [screen, setScreen] = useState({
         width: window.innerWidth,
@@ -53,92 +51,14 @@ export default function FirstPage({ product }) {
     })
 
     // Responsive columns
-    const [grid, reserve] = useMemo(() => {
-
-        const width = screen.width
-        const height = screen.height
-        const ratio = width / height
-
-        // Mobile Portrait
-        if (ratio < 0.9) {
-
-            return [
-                {
-                    rows: 8,
-                    cols: 4
-                },
-
-                [0, 0, 4, 8]
-            ]
-        }
-
-        // Tablet / Square
-        if (ratio < 1.4) {
-
-            return [
-                {
-                    rows: 8,
-                    cols: 8
-                },
-
-                [2, 0, 4, 8]
-            ]
-
-        }
-
-        // Desktop Wide
-        if (ratio < 2.0) {
-
-            return [
-                {
-                    rows: 8,
-                    cols: 12
-                },
-
-                [4, 0, 4, 8]
-            ]
-
-        }
-
-        // Ultrawide
-        return [
-            {
-                rows: 8,
-                cols: 12
-            },
-
-            [4, 0, 4, 8]
-        ]
-
-    }, [screen.width, screen.height])
-
-
+    const [grid, reserve] = useMemo(() =>
+        CalculateGrid(screen.width, screen.height),
+        [screen.width, screen.height])
 
     // Layout Calculation
-    const layout = useMemo(() => {
-        if (grid.rows == 0 && grid.cols == 0) return null;
-
-        const engine = new CellLayoutEngine(
-            grid.rows,
-            grid.cols
-        )
-        engine.reserve(...reserve)
-        const lay = [engine.calculate(WIDGETS)];
-        let i = 0;
-        while (lay[i].overflow.length !== 0 || i > 100) {
-            const engine = new CellLayoutEngine(
-                grid.rows,
-                grid.cols,
-                false
-            );
-            lay.push(engine.calculate(lay[i].overflow))
-            engine.printGrid();
-            i++
-        }
-        console.log(lay)
-        return lay
-
-    }, [grid, reserve])
+    const layout = useMemo(() =>
+        CalculateLayout(grid, reserve),
+        [grid, reserve])
 
     // Resize Listener
     useEffect(() => {
@@ -162,28 +82,162 @@ export default function FirstPage({ product }) {
 
     }, [])
 
-
-
+    const { product, setIsExpanded, isExpanded } = useProduct();
+    const closeBox = () => setIsExpanded(false);
     return (<>
         <div className={`${Styles.FirstPage} ${Styles.Page}`}>
-            <div className={Styles.wide}>
+            <div className={Styles.wide} onClick={closeBox}
+                style={{
+                    opacity: isExpanded ? 0.5 : 1
+                }}>
                 <Image src={product.media.wide.src} base={product.media.base} />
             </div>
 
             <WidgetGrid layoutItems={layout[0].placed} grid={grid} />
         </div>
         {
-            layout.slice(1).map((lay)=>{
+            layout.slice(1).map((lay) => {
                 return (
-                <div className={Styles.Page}>
-                    <WidgetGrid layoutItems={lay.placed} grid={grid} />
-                </div>
+                    <div className={Styles.Page} onClick={closeBox} style={{height:"100dvh"}}>
+                        <WidgetGrid layoutItems={lay.placed} grid={grid} />
+                    </div>
                 )
             })
         }
-        </>
+        
+        {/* Render a single layout page container for the entire gallery collection */}
+        <div className={`${Styles.Page} onClick={closeBox} ${Styles.GalleryPage}`}>
+            <h2 className={Styles.GalleryTitle}>Product Gallery</h2>
+
+            <div className={Styles.GalleryGrid}>
+                {product.data.media.gallery.map((image, index) => {
+                    return (
+                        <div key={image.id || index} className={Styles.GalleryItem}>
+                            <Image
+                                base={product.data.media.base}
+                                src={image.src}
+                                highResSrc={image.highRes}
+                                expandable={true}
+                                alt={`Gallery preview ${index + 1}`}
+                                style={{
+                                    objectFit: "contain",
+                                    maxWidth: "100%",
+                                    maxHeight: "100%",
+                                    width: "auto",
+                                    height: "auto"
+                                }}
+                            />
+                        </div>
+                    )
+                })}
+            </div>
+        </div>
+
+    </>
     )
+})
+
+function CalculateGrid(width, height) {
+    const ratio = width / height
+
+    // Mobile Portrait
+    if (ratio < 0.9) {
+
+        return [
+            {
+                rows: 8,
+                cols: 4
+            },
+
+            [0, 0, 4, 8]
+        ]
+    }
+
+    // Tablet / Square
+    if (ratio < 1.4) {
+
+        return [
+            {
+                rows: 8,
+                cols: 8
+            },
+
+            [2, 0, 4, 8]
+        ]
+
+    }
+
+    // Desktop Wide
+    if (ratio < 2.0) {
+
+        return [
+            {
+                rows: 8,
+                cols: 12
+            },
+
+            [4, 0, 4, 8]
+        ]
+
+    }
+
+    // Ultrawide
+    return [
+        {
+            rows: 8,
+            cols: 12
+        },
+
+        [4, 0, 4, 8]
+    ]
+
 }
+
+
+function CalculateLayout(grid, reserve) {
+    if (grid.rows === 0 && grid.cols === 0) return null;
+
+    // Instantiate with your configuration mode ("compact" or "scatter")
+    const engine = new CellLayoutEngine(grid.rows, grid.cols, "scatter");
+    engine.reserve(...reserve);
+    
+    const lay = [engine.calculate(WIDGETS)];
+    let i = 0;
+    
+    // Fixed condition bug: changed from OR (||) to AND (&&) to avoid crashing tabs
+    while (lay[i].overflow.length !== 0 && i < 5) {
+        const overflowEngine = new CellLayoutEngine(grid.rows, grid.cols, "compact");
+        lay.push(overflowEngine.calculate(lay[i].overflow));
+        i++;
+    }
+    return lay;
+}
+
+
+// function CalculateLayout(grid, reserve) {
+//     if (grid.rows == 0 && grid.cols == 0) return null;
+
+//     const engine = new CellLayoutEngine(
+//         grid.rows,
+//         grid.cols
+//     )
+//     engine.reserve(...reserve)
+//     const lay = [engine.calculate(WIDGETS)];
+//     let i = 0;
+//     while (lay[i].overflow.length !== 0 || i > 100) {
+//         const engine = new CellLayoutEngine(
+//             grid.rows,
+//             grid.cols,
+//             false
+//         );
+//         lay.push(engine.calculate(lay[i].overflow))
+//         engine.printGrid();
+//         i++
+//     }
+//     console.log(lay)
+//     return lay
+
+// }
 
 
 
@@ -230,3 +284,5 @@ function Widget({ widget }) {
     )
 
 }
+
+export default FirstPage;

@@ -1,6 +1,6 @@
 .Page{
     width: 100%;
-    height: 100vh;
+    height: auto;
     overflow: hidden;
     position: relative;
     backdrop-filter: blur(10px);
@@ -8,12 +8,18 @@
 }
 .FirstPage{
     backdrop-filter: none;
+    height: 100dvh;
 }
 
 .FirstPage .wide{
     width: 100%;
     height: 100vh;
     position: fixed;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    transition: opacity 0.5s ease;
 }
 .FirstPage .wide::before{
     content: "";
@@ -29,6 +35,64 @@
     object-fit: cover;
 }
 
+/* Custom variation for the main container layout */
+.GalleryPage {
+    display: flex;
+    flex-direction: column;
+    justify-content: center; /* Centers the grid vertically */
+    align-items: center;     /* Centers the grid horizontally */
+    height: auto;            /* Removes forced 100vh full-screen restrictions */
+    min-height: 50vh;        /* Gives breathing room if there are few images */
+    padding: 60px 20px;
+    box-sizing: border-box;
+}
+
+.GalleryTitle {
+    color: var(--theme-text, #ffffff);
+    margin-bottom: 30px;
+    font-size: 1.5rem;
+    letter-spacing: 1px;
+    opacity: 0.8;
+}
+
+/* The actual adaptive Grid configuration */
+.GalleryGrid {
+    display: grid;
+    /* Adjust '150px' to match how wide you want each thumbnail cell to be */
+    grid-template-columns: repeat(auto-fit, minmax(150px, max-content));
+    grid-gap: 20px;
+    width: 100%;
+    max-width: 1000px;        /* Prevents layout stretching on ultrawide screens */
+    justify-content: center;  /* Centers smaller thumbnail items horizontally */
+    align-items: center;      /* Centers mismatched sizes inside their grid cells */
+}
+
+/* Perfect alignment for each small image container */
+.GalleryItem {
+    width: 150px;             /* Keeps sizing uniform for small images */
+    height: 150px;            /* Forces square bounds for orderly layout rules */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: rgba(255, 255, 255, 0.04);
+    border-radius: 12px;
+    padding: 10px;
+    box-sizing: border-box;
+    transition: background 0.3s ease, transform 0.2s ease;
+    overflow: hidden;
+}
+
+/* Hover accent effects */
+.GalleryItem:hover {
+    background: rgba(255, 255, 255, 0.08);
+    transform: translateY(-3px);
+}
+
+
+
+
+
+
 .Page .wigits{
     position: absolute;
     width: calc(90%);
@@ -38,10 +102,11 @@
     left: 50%;
     transform: translate(-50%,-50%);
     display: grid;
-    grid-template-columns: repeat(var(--cols),auto);
-    grid-template-rows: repeat(var(--rows),auto);
+    grid-template-columns: repeat(var(--cols),1fr);
+    grid-template-rows: repeat(var(--rows),1fr);
     grid-row-gap: 0px;
     grid-column-gap: 10px;
+    pointer-events: none;
 }
 .Page .wigit{
     position: relative;
@@ -52,6 +117,7 @@
     width: 100%;
     height: 100%;
     border-radius: 20px;
+    pointer-events: auto;
 }
 .widget::before{
     content: "";
