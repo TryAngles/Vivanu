@@ -2,70 +2,75 @@
    1. VIEWPORT & CONFIGURATION HOOKS
    ========================================== */
 :root {
-  interpolate-size: allow-keywords; /* Enables keyword animations globally */
+  interpolate-size: allow-keywords; /* Enables smooth grid keyword transitions natively */
 }
 
 .ProductPage {
   width: 100%;
-  /* FIXED: Optimization - Swapped from 100dvh to static svh for zero processing lag */
   min-height: calc(100svh - 1px);
 }
 
 /* ==========================================
-   2. HARDWARE-ACCELERATED STICKY APP COMPONENT
+   2. HARDWARE-ACCELERATED PRESENTATION DRAWER
    ========================================== */
 .productBox {
-  /* FIXED: Changed to fixed so it anchors to the viewport, NOT the page flow */
   position: fixed;   
-  bottom: 64px;       /* Stays locked right here, completely ignoring the footer */
+  bottom: 76px;       
   left: 50%;
-  transform: translateX(-50%); /* FIXED: Centers a fixed element perfectly on mobile screens */
-  
-  width: 100%;
-  z-index: 2;                 /* Placed safely over footer stacks */
+  transform: translateX(-50%); 
+  width: calc(100% - 20px);
+  max-width: var(--body-width); 
+  z-index: 2;                 
   display: flex;
   justify-content: center;
   pointer-events: none;
   height: auto;             
-  max-height: 80%;         
+  max-height: 80%;   
+  padding: 0 15px;      
 }
 
 .innerProductBox {
-  width: calc(100% - 20px);
-  max-width: var(--body-width);
+  width: calc(100%); 
   background-color: var(--theme);
   border-radius: 10px;
   padding: 10px;
-  height: auto;          
+  height: 100%;          
   position: relative;
   display: flex;
   flex-direction: column;
   align-items: center;
   pointer-events: all; 
   
-  /* FIXED: Set clear base vector transformations */
   transform: translateY(0); 
   will-change: transform;
+  /* Premium app-drawer bezier curve transition tracking */
   transition: transform 0.4s cubic-bezier(0.25, 1, 0.5, 1);
 }
 
-/* FIXED: Now it always drops smoothly straight down past the screen glass boundary */
+/* Slide cleanly down past display view glass when scroll minimization hits */
 .productBox.minimised .innerProductBox {
-  /* Translates its own full size downwards, clearing the screen cleanly */
   transform: translateY(calc(100% + 80px)); 
 }
 
+.productBox.expanded {
+  max-height: 80%; 
+}
+
+.productBox.expanded .innerProductBox {
+  /* width: calc(100% - 20px);  */
+  border-radius: 10px;      
+}
 
 /* ==========================================
    3. INTERNAL COLLAPSE & EXPANSION TRACKS
    ========================================== */
 .innerProductBox .main {
   width: 100%;
-  max-height: calc(var(--content-height) - 140px);
+  max-height: calc(var(--content-height) - 40svh);
   flex: 1;
   display: grid;
   grid-template-rows: auto 0fr;
-  transition: grid-template-rows 0.3s ease;
+  transition: grid-template-rows 0.35s cubic-bezier(0.25, 1, 0.5, 1);
 }
 
 .productBox.expanded .main {
@@ -78,23 +83,24 @@
   flex-direction: column;
   align-items: center;
   gap: 5px;
-  flex: 0 0 auto;
+  flex: 0 0 0px;
 }
 
 .productBox.expanded .content {
   overflow-y: auto; 
   border-top: 1px solid var(--theme-light);
   border-bottom: 1px solid var(--theme-light);
+  -webkit-overflow-scrolling: touch;
 }
 
 /* ==========================================
-   4. CONTENT & PRODUCT INFORMATION PANELS
+   4. LUXURY DESCRIPTION PANELS & CONTENT
    ========================================== */
 .content {
   border-top: 1px solid transparent;
   border-bottom: 1px solid transparent;
   color: var(--theme-text);
-  padding: 0;
+  padding: 0px;
   overflow: hidden;
   min-height: 0;
 }
@@ -110,31 +116,43 @@
 }
 
 .content .title {
-  font-weight: 500;
-  font-size: 16px;
+  font-weight: 700;
+  font-size: 15px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  /* RESTORED: Premium theme highlight color title accent */
+  color: var(--root-theme); 
 }
 
 .content p {
   padding: 10px 0 0 0;
   opacity: 0.7;
   font-size: 15px;
+  line-height: 1.5; /* RESTORED: Comfortable, premium line spacing */
 }
 
 .content ul {
   padding-left: 20px;
+  margin-top: 8px;
+}
+
+.content ul li {
+  padding: 4px 0;
+  font-size: 14px;
+  opacity: 0.8;
 }
 
 .viewMore {
   padding: 5px;
   font-size: 12px;
-  text-decoration: underline;
-  color: var(--theme-text);
-  opacity: 0.7;
+  text-transform: uppercase;
+  color: var(--root-theme);
+  font-weight: 900;
   cursor: pointer;
 }
 
 /* ==========================================
-   5. COMPONENT ELEMENTS (META, THUMBNAIL, PRICE)
+   5. INFOBAR STRUCTURAL DETAILS
    ========================================== */
 .productBox .info {
   display: flex;
@@ -146,6 +164,7 @@
 
 .productBox .meta {
   flex: 1;
+  cursor: pointer;
 }
 
 .info .name {
@@ -165,7 +184,7 @@
   padding: 3px;
   font-size: 12px;
   border-radius: 5px;
-  margin: 4px 2px 0 2px;
+  margin: 4px 2px 0px 2px;
 }
 
 .info .label.color {
@@ -196,7 +215,7 @@
   flex-wrap: wrap;
 }
 
-.price mrp {
+.mrp {
   text-decoration: line-through;
   font-weight: 400;
   opacity: 0.7;
@@ -204,7 +223,7 @@
   padding: 0 5px;
 }
 
-.price discount {
+.discount {
   font-weight: 500;
   font-size: 20px;
   color: var(--color);
@@ -212,14 +231,14 @@
   display: flex;
 }
 
-.price discount svg {
+.discount svg {
   margin: auto 0;
   height: 22px;
   width: 22px;
 }
 
 /* ==========================================
-   6. INTERACTIVE UTILITIES & BUTTONS
+   6. PREMIUM CALL TO ACTION BUTTONS
    ========================================== */
 .addToCart {
   width: 100%;
@@ -228,7 +247,7 @@
   text-align: center;
   text-shadow: 0 0 10px var(--theme);
   border: 1px solid var(--root-theme);
-  transition: 0.1s;
+  transition: all 0.2s cubic-bezier(0.25, 1, 0.5, 1);
   border-radius: 10px;
   color: var(--theme-text);
   cursor: pointer;

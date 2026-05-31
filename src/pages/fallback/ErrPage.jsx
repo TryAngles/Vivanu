@@ -1,5 +1,5 @@
 import { useNavigate } from "react-router"
-import { BackIcon, WarningIcon } from "../../components/icon"
+import { BackIcon, WarningIcon } from "../../components/micro/icon"
 import Styles from "./ErrPage.module.css"
 export default function ErrPage({status,message}) {
     const navigate = useNavigate()

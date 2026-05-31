@@ -1,32 +1,252 @@
+/* ==========================================
+   1. INLINE DEV CONTROLLER (STYLING ONLY)
+   ========================================== */
+.devController {
+    /* FIXED: Switched to absolute to remain perfectly stable relative to the app viewport frame */
+    position: fixed;
+    top: 75px; 
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 101; /* Layered safely directly over the fixed dynamic island */
+    display: flex;
+    gap: 6px;
+    background: rgba(0, 0, 0, 0.8);
+    padding: 6px;
+    border-radius: 20px;
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    pointer-events: all;
+}
+.devController button {
+    background: rgba(255, 255, 255, 0.1);
+    border: none;
+    color: white;
+    padding: 4px 10px;
+    font-size: 10px;
+    font-weight: 600;
+    border-radius: 12px;
+    cursor: pointer;
+    text-transform: uppercase;
+}
+.devController button:hover {
+    background: var(--root-theme, #d9b061);
+    color: black;
+}
+
+/* ==========================================
+   2. FIXED POSITIONING CONTROLLER
+   ========================================== */
 .navBox {
     width: 100%;
-    padding: 10px;
-    position: sticky;
-    z-index: 10;
-    top: 0; 
+    padding: 16px 10px; 
+    
+    /* FIXED: Swapped from sticky to absolute absolute to isolate touch gestures from snap pages */
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    
+    z-index: 100;
     display: flex;
     align-items: center;
     justify-content: center;
     pointer-events: none;
+    
+    will-change: transform;
+    /* High-end cinematic bezier physics curve handles show/hide actions */
+    transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1);
 }
+
+.navBox.minimise {
+    /* Subtle physics squash upward handles scroll hiding cleanly */
+    transform: translateY(-130%) scaleY(0.8); 
+}
+
 .navbar {
-    max-width: var(--body-width);
-    width: 100%;
-    background-color: var(--theme-deep);
-    padding: 10px;
-    text-transform: uppercase;
-    font-weight: 700;
-    border-radius: 10px;
+    pointer-events: all;
+    cursor: pointer;
+    background: #000000; 
+    box-sizing: border-box;
+    width: 150px; /* Base sleek compact layout shape boundary */
+    height: 34px; 
+    border-radius: 20px; 
+    padding: 0 14px;
     display: flex;
     align-items: center;
     justify-content: center;
-    box-shadow: 0 0 30px -10px var(--root-theme);
-    pointer-events: all;
-    will-change: transform;
-    transition: transform 0.4s cubic-bezier(0.25, 1, 0.5, 1);
+    overflow: hidden;
+    position: relative;
+    border: 1px solid rgba(255, 255, 255, 0.09);
+    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.05);
+    
+    will-change: width, height, border-radius;
+    /* Elastic spring transition physics config rules */
+    transition: width 0.45s cubic-bezier(0.175, 0.885, 0.32, 1.275),
+                height 0.45s cubic-bezier(0.175, 0.885, 0.32, 1.275),
+                border-radius 0.45s cubic-bezier(0.175, 0.885, 0.32, 1.275),
+                border-color 0.3s ease;
 }
 
+.islandContent {
+    width: 100%;
+    height: 100%;
+    display: grid;
+    grid-template-columns: auto 1fr auto; 
+    align-items: center;
+    gap: 8px;
+}
+.leftSlot, .rightSlot {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 14px;
+}
 
-.navBox.minimise .navbar {
-    transform: translateY(-200%); 
+/* ==========================================
+   3. MORPHING LAYOUT STATES (THE MAGIC CODES)
+   ========================================== */
+
+/* STATE A: CART ALERT MODE (Stretches horizontal widely) */
+.navbar.cartAlert {
+    width: 260px;
+    height: 38px;
+    border-color: var(--root-theme-green, rgb(115, 237, 115));
+}
+
+/* STATE B: LIVE EVENT DROPPER MODE (Pulsing capsule profile) */
+.navbar.liveStream {
+    width: 190px;
+    border-color: rgba(255, 0, 0, 0.4);
+    box-shadow: 0 0 12px rgba(255, 0, 0, 0.2), 0 12px 30px rgba(0, 0, 0, 0.4);
+}
+
+/* STATE C: MEGA DETAILS DROPDOWN EDITION (Becomes a full menu asset drawer) */
+.navbar.expanded {
+    width: 100%;
+    max-width: var(--body-width);
+    height: 72px; /* Smoothly grows taller downwards to reveal options */
+    border-radius: 18px;
+    border-color: rgba(255, 255, 255, 0.2);
+}
+
+/* ==========================================
+   4. TYPOGRAPHY & ANIMATED SUB-ELEMENTS
+   ========================================== */
+.brandZone {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-width: 0;
+}
+.logoText {
+    font-size: 11px;
+    font-weight: 800;
+    color: #ffffff;
+    letter-spacing: 3px; 
+    text-transform: uppercase;
+    white-space: nowrap;
+    animation: fadeIn 0.2s ease-out;
+}
+
+/* Alert styling text sheets */
+.alertText {
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--root-theme-green, #73ed73);
+    letter-spacing: 0.5px;
+    animation: slideInUp 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.liveText {
+    font-size: 11px;
+    font-weight: 700;
+    color: #ffffff;
+    letter-spacing: 0.5px;
+    animation: fadeIn 0.3s ease;
+}
+
+/* Expanded state components */
+.megaMenu {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    animation: fadeIn 0.4s ease;
+}
+.logoTextExpanded {
+    font-size: 14px;
+    font-weight: 800;
+    color: #ffffff;
+    letter-spacing: 5px;
+    text-transform: uppercase;
+    background: linear-gradient(135deg, #ffffff 40%, var(--root-theme, #d9b061) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+.subtitle {
+    font-size: 8px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    color: var(--root-theme, #d9b061);
+    margin-top: 4px;
+}
+
+/* Micro interaction badges and indicator blocks */
+.badgeCount {
+    font-size: 10px;
+    font-weight: 800;
+    color: #000000;
+    background: var(--root-theme-green, #73ed73);
+    padding: 1px 5px;
+    border-radius: 6px;
+    animation: scaleIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+.liveCount {
+    font-size: 9px;
+    font-weight: 700;
+    color: rgba(255,255,255,0.6);
+}
+.pulseDot {
+    width: 6px;
+    height: 6px;
+    background: #ff3b30;
+    border-radius: 50%;
+    box-shadow: 0 0 0 rgba(255, 59, 48, 0.4);
+    animation: pulseLoop 1.2s infinite;
+}
+.closeIcon {
+    color: rgba(255,255,255,0.4);
+    font-size: 18px;
+}
+.backArrow {
+    color: rgba(255,255,255,0.4);
+    font-size: 14px;
+}
+.iconAnim {
+    animation: bounceIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+/* ==========================================
+   5. NATIVE GPU ANIMATIONS PIPELINES
+   ========================================== */
+@keyframes fadeIn {
+    from { opacity: 0; } to { opacity: 1; }
+}
+@keyframes slideInUp {
+    from { transform: translateY(8px); opacity: 0; }
+    to { transform: translateY(0); opacity: 1; }
+}
+@keyframes scaleIn {
+    from { transform: scale(0); } to { transform: scale(1); }
+}
+@keyframes bounceIn {
+    0% { transform: scale(0.3); }
+    50% { transform: scale(1.1); }
+    100% { transform: scale(1); }
+}
+@keyframes pulseLoop {
+    0% { box-shadow: 0 0 0 0 rgba(255, 59, 48, 0.7); }
+    70% { box-shadow: 0 0 0 6px rgba(255, 59, 48, 0); }
+    100% { box-shadow: 0 0 0 0 rgba(255, 59, 48, 0); }
 }

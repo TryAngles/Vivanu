@@ -1,288 +1,180 @@
 import Styles from "./firstPage.module.css"
 import React, { useEffect, useMemo, useState } from "react"
-
-import { Image } from "../../components/micro/media"
+import { Media } from "../../components/micro/media"
 import CellLayoutEngine from "../../lib/layoutEngine"
-
 import { useProduct } from "./ProductContextProvider"
 
-const WIDGETS = [
-    {
-        id: "camera",
-        priority: 100,
-        ratio: 1,
-        cols: 2
-    },
-
-    {
-        id: "materials",
-        priority: 90,
-        ratio: 1.5,
-        cols: 3
-    },
-
-    {
-        id: "battery",
-        priority: 80,
-        ratio: 2,
-        cols: 2
-    },
-
-    {
-        id: "shipping",
-        priority: 40,
-        ratio: 1,
-        cols: 2
-    },
-
-    {
-        id: "reviews",
-        priority: 30,
-        ratio: 1,
-        cols: 2
-    }
-]
-
 const FirstPage = React.memo(() => {
-
-    const [screen, setScreen] = useState({
-        width: window.innerWidth,
-        height: window.innerHeight
-    })
-
-    // Responsive columns
-    const [grid, reserve] = useMemo(() =>
-        CalculateGrid(screen.width, screen.height),
-        [screen.width, screen.height])
-
-    // Layout Calculation
-    const layout = useMemo(() =>
-        CalculateLayout(grid, reserve),
-        [grid, reserve])
-
-    // Resize Listener
-    useEffect(() => {
-        let i = null;
-
-        const handleResize = () => {
-            clearTimeout(i);
-            i = setTimeout(() => {
-                setScreen({
-                    width: window.innerWidth,
-                    height: window.innerHeight
-                })
-            }, 500)
-        }
-
-        window.addEventListener("resize", handleResize)
-
-        return () => {
-            window.removeEventListener("resize", handleResize)
-        }
-
-    }, [])
-
+    const [screen, setScreen] = useState({ 
+        width: window.innerWidth, 
+        height: window.innerHeight 
+    });
+    
     const { product, setIsExpanded, isExpanded } = useProduct();
+
+    // 1. SAFE DATA EXTRACTION PIPELINE
+    const activeWidgets = useMemo(() => {
+        const attributes = product?.attributes || [];
+        return attributes.map((attr) => {
+            const definedCols = Number(attr.cols) || 2;
+            const definedRatio = Number(attr.ratio) || 1;
+            
+            let calculatedRows = 2; 
+            if (definedRatio === 2) calculatedRows = 1; 
+
+            return {
+                id: attr.id,
+                label: attr.label,
+                value: attr.value,
+                media: attr.media || [],
+                priority: Number(attr.priority) || 10,
+                cols: definedCols,
+                rows: calculatedRows
+            };
+        });
+    }, [product]);
+
+    // Gather adaptive column counts safely
+    const [grid, reserve] = useMemo(() => 
+        CalculateGrid(screen.width, screen.height), 
+        [screen.width, screen.height]
+    );
+
+    // 2. STABLE PROCESSOR PASS
+    const layout = useMemo(() => {
+        if (!activeWidgets || activeWidgets.length === 0 || !grid) return null;
+        return CalculateLayout(grid, reserve, activeWidgets);
+    }, [grid, reserve, activeWidgets]);
+
+    // Handle viewport changes cleanly
+    useEffect(() => {
+        let timer = null;
+        const handleResize = () => {
+            clearTimeout(timer);
+            timer = setTimeout(() => {
+                setScreen({ width: window.innerWidth, height: window.innerHeight });
+            }, 500);
+        };
+        window.addEventListener("resize", handleResize);
+        return () => window.removeEventListener("resize", handleResize);
+    }, []);
+
     const closeBox = () => setIsExpanded(false);
-    return (<>
-        <div className={`${Styles.FirstPage} ${Styles.Page}`} onClick={closeBox}>
-            <div className={Styles.wide}
-                style={{
-                    opacity: isExpanded ? 0.5 : 1
-                }}>
-                <Image src={product.media.wide.src} base={product.media.base} />
+
+    // FIXED: Upgraded defensive validation check prevents virtual DOM runtime crashes
+    if (!layout || !layout[0] || !layout[0].placed) return null;
+
+    return (
+        <>
+            {/* Primary Page Canvas (Scatter Engine Layout Sheet View) */}
+            <div className={`${Styles.Page} ${Styles.FirstPage} section`} onClick={closeBox}>
+                <div className={Styles.wide} style={{ opacity: isExpanded ? 0.5 : 1 }}>
+                    <Media src={product.media.wide.src} base={product.media.base} expandable={false} />
+                </div>
+                <WidgetGrid layoutItems={layout[0].placed} grid={grid} />
             </div>
 
-            <WidgetGrid layoutItems={layout[0].placed} grid={grid} />
-        </div>
-        {
-            layout.slice(1).map((lay) => {
+            {/* Overflow Sheets tracking (Compact Engine Layout views) */}
+            {layout.slice(1).map((lay, index) => {
+                if (!lay || !lay.placed || lay.placed.length === 0) return null;
                 return (
-                    <div className={Styles.Page} onClick={closeBox}>
+                    <div key={index} className={`${Styles.Page} section`} onClick={closeBox}>
                         <WidgetGrid layoutItems={lay.placed} grid={grid} />
                     </div>
-                )
-            })
-        }
-        
-        {/* Render a single layout page container for the entire gallery collection */}
-        <div className={`${Styles.Page} ${Styles.GalleryPage}`} onClick={closeBox}>
-            <h2 className={Styles.GalleryTitle}>Product Gallery</h2>
-
-            <div className={Styles.GalleryGrid}>
-                {product.data.media.gallery.map((image, index) => {
-                    return (
+                );
+            })}
+            
+            {/* Fullscreen Portal Product Media Gallery section */}
+            <div className={`${Styles.Page} ${Styles.GalleryPage} section`} onClick={closeBox}>
+                <h2 className={Styles.GalleryTitle}>Product Gallery</h2>
+                <div className={Styles.GalleryGrid}>
+                    {product.data.media.gallery.map((image, index) => (
                         <div key={image.id || index} className={Styles.GalleryItem}>
-                            <Image
-                                base={product.data.media.base}
-                                src={image.src}
-                                highResSrc={image.highRes}
-                                expandable={true}
-                                alt={`Gallery preview ${index + 1}`}
-                                style={{
-                                    objectFit: "contain",
-                                    maxWidth: "100%",
-                                    maxHeight: "100%",
-                                    width: "auto",
-                                    height: "auto"
-                                }}
-                            />
+                            <Media base={product.media.base} src={image.src} highResSrc={image.highRes} expandable={true} />
                         </div>
-                    )
-                })}
+                    ))}
+                </div>
             </div>
-        </div>
-
-    </>
-    )
-})
+        </>
+    );
+});
 
 function CalculateGrid(width, height) {
-    const ratio = width / height
-
-    // Mobile Portrait
-    if (ratio < 0.9) {
-
-        return [
-            {
-                rows: 8,
-                cols: 4
-            },
-
-            [0, 0, 4, 8]
-        ]
-    }
-
-    // Tablet / Square
-    if (ratio < 1.4) {
-
-        return [
-            {
-                rows: 8,
-                cols: 8
-            },
-
-            [2, 0, 4, 8]
-        ]
-
-    }
-
-    // Desktop Wide
-    if (ratio < 2.0) {
-
-        return [
-            {
-                rows: 8,
-                cols: 12
-            },
-
-            [4, 0, 4, 8]
-        ]
-
-    }
-
-    // Ultrawide
-    return [
-        {
-            rows: 8,
-            cols: 12
-        },
-
-        [4, 0, 4, 8]
-    ]
-
+    const ratio = width / height;
+    // FIXED: Ensured that all device layout outputs consistently pass clean array tracks
+    if (ratio < 0.9) return [{ rows: 8, cols: 4 }, [0, 0, 4, 8]];
+    if (ratio < 1.4) return [{ rows: 8, cols: 8 }, [2, 0, 4, 8]];
+    return [{ rows: 8, cols: 12 }, [4, 0, 4, 8]];
 }
 
+function CalculateLayout(grid, reserve, activeWidgets) {
+    if (!grid || grid.rows === 0 || grid.cols === 0) return null;
 
-function CalculateLayout(grid, reserve) {
-    if (grid.rows === 0 && grid.cols === 0) return null;
+    const pageLayouts = [];
+    const validReserve = Array.isArray(reserve) ? reserve : []; // FIXED: Removed blank conditional compiler breaks
 
-    // Instantiate with your configuration mode ("compact" or "scatter")
-    const engine = new CellLayoutEngine(grid.rows, grid.cols, "scatter");
-    engine.reserve(...reserve);
+    // Page 1 Sheet Generator (Scatter Matrix Layout Pass)
+    const scatterEngine = new CellLayoutEngine(grid.rows, grid.cols, "scatter");
+    if (validReserve.length > 0) scatterEngine.reserve(...validReserve);
     
-    const lay = [engine.calculate(WIDGETS)];
-    let i = 0;
+    let currentResult = scatterEngine.calculate(activeWidgets);
+    pageLayouts.push(currentResult);
     
-    // Fixed condition bug: changed from OR (||) to AND (&&) to avoid crashing tabs
-    while (lay[i].overflow.length !== 0 && i < 5) {
-        const overflowEngine = new CellLayoutEngine(grid.rows, grid.cols, "compact");
-        lay.push(overflowEngine.calculate(lay[i].overflow));
-        i++;
+    // Pages 2-5 Sheet Generators (Sequential Compact Matrix Layout Passes)
+    let safetyCounter = 0;
+    while (currentResult.overflow && currentResult.overflow.length !== 0 && safetyCounter < 5) {
+        const compactEngine = new CellLayoutEngine(grid.rows, grid.cols, "compact");
+        currentResult = compactEngine.calculate(currentResult.overflow);
+        pageLayouts.push(currentResult);
+        safetyCounter++;
     }
-    return lay;
+    
+    return pageLayouts;
 }
-
-
-// function CalculateLayout(grid, reserve) {
-//     if (grid.rows == 0 && grid.cols == 0) return null;
-
-//     const engine = new CellLayoutEngine(
-//         grid.rows,
-//         grid.cols
-//     )
-//     engine.reserve(...reserve)
-//     const lay = [engine.calculate(WIDGETS)];
-//     let i = 0;
-//     while (lay[i].overflow.length !== 0 || i > 100) {
-//         const engine = new CellLayoutEngine(
-//             grid.rows,
-//             grid.cols,
-//             false
-//         );
-//         lay.push(engine.calculate(lay[i].overflow))
-//         engine.printGrid();
-//         i++
-//     }
-//     console.log(lay)
-//     return lay
-
-// }
-
-
 
 function WidgetGrid({ layoutItems, grid }) {
-
+    if (!layoutItems || layoutItems.length === 0) return null;
+    
     return (
-        <div className={Styles.wigits} style={{
-            "--rows": `${grid.rows}`,
-            "--cols": `${grid.cols}`
-        }}>
-            {
-                layoutItems.map((item) => {
-
-                    return (
-                        <div
-                            key={item.id}
-                            className={Styles.wigit}
-                            style={{
-                                gridRow: `${item.y + 1} / span ${item.widgetRows}`,
-                                gridColumn: `${item.x + 1} / span ${item.widgetCols}`
-                            }}
-                        >
-                            <Widget widget={item} />
-                        </div>
-                    )
-
-                })
-            }
-
+        <div className={Styles.wigits} style={{ "--rows": `${grid.rows}`, "--cols": `${grid.cols}` }}>
+            {layoutItems.map((item) => (
+                <div
+                    key={item.id}
+                    className={Styles.wigit}
+                    style={{
+                        gridRow: `${item.y + 1} / span ${item.reserveRows}`,
+                        gridColumn: `${item.x + 1} / span ${item.reserveCols}`
+                    }}
+                >
+                    <Widget widget={item} />
+                </div>
+            ))}
         </div>
-    )
+    );
 }
 
-
-
 function Widget({ widget }) {
+    const { product } = useProduct();
+    const hasMedia = widget.media && widget.media.length > 0;
 
     return (
-        <div className={Styles.widget}>
-            <div className={Styles.title}>
-                {widget.id}
+        <div className={`
+            ${Styles.widget} 
+            ${hasMedia ? Styles.widgetWithMedia : ""} 
+            ${widget.isSplit ? Styles.widgetSplitLayout : Styles.widgetInternalLayout}
+        `}>
+            {hasMedia && (
+                <div className={Styles.mediaLayerFrame} style={{ height: `calc((100% / ${widget.reserveRows}) * ${widget.widgetRows})` }}>
+                    <Media media={widget.media} base={product.media.base} expandable={true} controls={false} />
+                </div>
+            )}
+
+            <div className={Styles.widgetBody}>
+                <span className={Styles.widgetMeta}>{widget.label}</span>
+                <h4 className={Styles.widgetHeading}>{widget.value}</h4>
             </div>
         </div>
-    )
-
+    );
 }
 
 export default FirstPage;

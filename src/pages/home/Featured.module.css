@@ -1,28 +1,85 @@
-.Featured{
+.Featured {
     width: 100%;
-    padding: 10px 0;
-    overflow-y: auto;
+    padding: 15px 0;
+    overflow: hidden;
 }
-.Featured::-webkit-scrollbar{
-    display: none;
-}
-.posterList{
+
+.posterList {
     display: flex;
     flex-direction: row;
-    min-width: 0;
-    min-height: 100%;
+    gap: 16px;
+    overflow-x: auto;
+    width: 100%;
+    padding: 10px 20px;
+    -webkit-overflow-scrolling: touch;
+    scroll-snap-type: x mandatory;
 }
-.poster{
-    min-width: calc(var(--body-width) - 20px);
-    width: calc(var(--body-width) - 20px);
+
+.posterList::-webkit-scrollbar {
+    display: none;
+}
+
+.poster {
+    /* FIXED: Fluid responsive sizing rules stretch perfectly on mobile devices */
+    min-width: calc(100% - 20px);
+    width: calc(100% - 20px);
     background-color: var(--theme-deep);
-    margin: 10px;
     aspect-ratio: 16 / 9;
-    border-radius: 20px;
+    border-radius: 16px;
     overflow: hidden;
-    box-shadow: 0 0 10px 0px var(--theme-light);
+    position: relative;
+    scroll-snap-align: center;
+    border: 1px solid var(--theme-light);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
 }
-.poster img{
-    filter:blur(6px);
-    transform: scale(1.1);
+
+/* FIXED: Desktop layout optimization: lets you view multiple banners at once on wide displays */
+@media (min-width: 820px) {
+    .poster {
+        min-width: calc(50% - 10px);
+        width: calc(50% - 10px);
+    }
+}
+@media (min-width: 1200px) {
+    .poster {
+        min-width: calc(33.33% - 12px);
+        width: calc(33.33% - 12px);
+    }
+}
+
+.poster img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.posterOverlay {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(to top, rgba(0, 0, 0, 0.8) 0%, rgba(0, 0, 0, 0.2) 60%, transparent 100%);
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    padding: 16px;
+    pointer-events: none;
+}
+
+.badge {
+    background-color: var(--root-theme);
+    color: #000000;
+    font-size: 10px;
+    font-weight: 700;
+    text-transform: uppercase;
+    padding: 3px 8px;
+    border-radius: 4px;
+    width: max-content;
+    margin-bottom: 6px;
+    letter-spacing: 0.5px;
+}
+
+.posterTitle {
+    color: #ffffff;
+    font-size: 18px;
+    font-weight: 700;
+    letter-spacing: 0.5px;
 }

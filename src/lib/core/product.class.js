@@ -95,15 +95,12 @@ export default class Product {
     }
 
     #normalize(data) {
-
         const pricing = new Price(data.pricing);
         const stock = obj(data.stock);
         const media = obj(data.media);
 
         return {
-
             id: str(data.id),
-
             type: str(data.type, "product"),
 
             brand: {
@@ -112,24 +109,12 @@ export default class Product {
             },
 
             title: str(data.title),
-
-            shortTitle: str(
-                data.shortTitle,
-                data.title
-            ),
+            shortTitle: str(data.shortTitle, data.title),
 
             description: {
-                short: str(
-                    data.description?.short
-                ),
-
-                full: str(
-                    data.description?.full
-                ),
-
-                bulletPoints: arr(
-                    data.description?.bulletPoints
-                ).map(v => str(v))
+                short: str(data.description?.short),
+                full: str(data.description?.full),
+                bulletPoints: arr(data.description?.bulletPoints).map(v => str(v))
             },
 
             pricing,
@@ -142,33 +127,16 @@ export default class Product {
             },
 
             media: {
-                base:`/data/products/${str(data.id)}`,
+                base: str(media.base, `/data/products/${str(data.id)}`),
                 thumbnail: {
-                    src: str(
-                        media.thumbnail?.src,
-                        "/placeholder.webp"
-                    ),
-                    alt: str(
-                        media.thumbnail?.alt,
-                        "thumbnail"
-                    )
+                    src: str(media.thumbnail?.src, "/placeholder.webp"),
+                    alt: str(media.thumbnail?.alt, "thumbnail")
                 },
-
                 wide: {
-                    src: str(
-                        media.wide?.src,
-                        media.thumbnail?.src
-                    ),
-
-                    alt: str(
-                        media.wide?.alt,
-                        "wide image"
-                    )
+                    src: str(media.wide?.src, media.thumbnail?.src),
+                    alt: str(media.wide?.alt, "wide image")
                 },
-
-                gallery: arr(
-                    media.gallery
-                ).map(v => ({
+                gallery: arr(media.gallery).map(v => ({
                     type: str(v.type, "image"),
                     src: str(v.src),
                     alt: str(v.alt)
@@ -176,51 +144,34 @@ export default class Product {
             },
 
             shipping: {
-
-                weight: str(
-                    data.shipping?.weight
-                ),
-
+                weight: str(data.shipping?.weight),
                 dimensions: {
-                    length: str(
-                        data.shipping?.dimensions?.length
-                    ),
-
-                    width: str(
-                        data.shipping?.dimensions?.width
-                    ),
-
-                    height: str(
-                        data.shipping?.dimensions?.height
-                    )
+                    length: str(data.shipping?.dimensions?.length),
+                    width: str(data.shipping?.dimensions?.width),
+                    height: str(data.shipping?.dimensions?.height)
                 },
-
-                returnable: bool(
-                    data.shipping?.returnable
-                ),
-
-                returnWindowDays: num(
-                    data.shipping?.returnWindowDays
-                )
+                returnable: bool(data.shipping?.returnable),
+                returnWindowDays: num(data.shipping?.returnWindowDays)
             },
 
             timestamps: {
-
-                createdAt: str(
-                    data.timestamps?.createdAt
-                ),
-
-                updatedAt: str(
-                    data.timestamps?.updatedAt
-                )
+                createdAt: str(data.timestamps?.createdAt),
+                updatedAt: str(data.timestamps?.updatedAt)
             },
 
-            attributes: arr(
-                data.Attribute
-            ).map(v => ({
+            // FIXED: Fully parsed attribute records matching your multimedia schema keys
+            attributes: arr(data.Attribute).map((v, index) => ({
+                id: str(v.id, `attr-${index}`),
                 label: str(v.label),
                 value: str(v.value),
-                priority: num(v.priority)
+                priority: num(v.priority, 10),
+                cols: num(v.cols, 2),       /* Restores grid layout widths dimensions */
+                ratio: num(v.ratio, 1),     /* Restores spatial dimension ratio constraints */
+                media: arr(v.media).map(m => ({
+                    type: str(m.type, "image"),
+                    src: str(m.src),
+                    alt: str(m.alt)
+                }))
             }))
         };
     }
@@ -277,8 +228,13 @@ export default class Product {
         return this.mrp - this.price;
     }
 
-    get media(){
+    get media() {
         return this.#meta.media;
+    }
+
+    // FIXED: Getter shortcut lets components reference attributes array context maps seamlessly
+    get attributes() {
+        return this.#meta.attributes;
     }
 
     toJSON() {

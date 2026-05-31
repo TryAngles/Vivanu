@@ -1,8 +1,121 @@
-footer{
-    height: 50vh;
-    width: 100%;
-    z-index: 1;
-    background-color: var(--theme);
+.section {
     scroll-snap-align: start;
     scroll-snap-stop: always;
+}
+
+.footer {
+    /* FIXED: Swapped out vh for svh to remain performance-static across mobile devices */
+    height: calc(50svh - 1px); 
+    width: 100%;
+    background-color: var(--theme-deep);
+    color: var(--theme-text);
+    border-top: 1px solid var(--theme-light);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+    z-index: 1;
+}
+
+.container {
+    width: 100%;
+    max-width: var(--body-width);
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    padding: 10px 0;
+}
+
+/* ==========================================
+   BRAND STYLING
+   ========================================== */
+.brandZone {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.brandName {
+    font-size: 24px;
+    font-weight: 900;
+    letter-spacing: 2px;
+    color: var(--root-theme);
+    text-transform: uppercase;
+}
+
+.tagline {
+    font-size: 13px;
+    opacity: 0.6;
+    text-align: center;
+}
+
+/* ==========================================
+   LINK DIRECTORY GRID
+   ========================================== */
+.linkGrid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+    margin: 20px 0;
+}
+
+.linkColumn {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.linkColumn h3 {
+    font-size: 14px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    opacity: 0.9;
+    color: var(--theme-text);
+    border-bottom: 1px solid var(--theme-light);
+    padding-bottom: 4px;
+}
+
+.linkColumn a {
+    font-size: 13px;
+    color: var(--theme-text);
+    text-decoration: none;
+    opacity: 0.65;
+    transition: opacity 0.2s ease, transform 0.2s ease;
+    width: max-content;
+}
+
+.linkColumn a:hover {
+    opacity: 1;
+    color: var(--root-theme);
+    transform: translateX(2px);
+}
+
+/* ==========================================
+   BASE BOTTOM STACK
+   ========================================== */
+.baseLine {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-top: 1px solid var(--theme-light);
+    padding-top: 15px;
+    font-size: 11px;
+    opacity: 0.5;
+}
+
+.legalLinks {
+    display: flex;
+    gap: 15px;
+}
+
+.legalLinks a {
+    color: var(--theme-text);
+    text-decoration: none;
+}
+
+.legalLinks a:hover {
+    text-decoration: underline;
+    color: var(--root-theme);
 }

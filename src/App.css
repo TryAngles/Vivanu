@@ -66,7 +66,7 @@ body {
   background-color: var(--theme);
   width: 100%;
   max-width: 100%;
-  height: calc(100vh); /* FIXED: Applied your 1px calculation strategy */
+  height: calc(100svh); /* FIXED: Swapped traditional vh out for stable svh rounding layers */
   overflow: hidden; 
 }
 
@@ -79,7 +79,8 @@ body {
   left: 0;
   
   overflow-y: auto;
-  scroll-snap-type: y mandatory; 
+  /* FIXED: Set to none as default layout for desktop mouse wheel freedom rules */
+  scroll-snap-type: none; 
   scroll-behavior: smooth;
   -webkit-overflow-scrolling: touch; 
   padding-top: env(safe-area-inset-top);
@@ -90,6 +91,12 @@ body {
 /* Hide scrollbar for standard webkit layout setups */
 #AppWapper::-webkit-scrollbar {
   display: none;
+}
+
+/* FIXED: Dynamic modifier class controlled by context toggles handles loading states */
+#AppWapper.noSnap {
+  scroll-snap-type: none !important;
+  scroll-behavior: auto !important;
 }
 
 .app {
@@ -104,7 +111,7 @@ body {
 }
 
 /* ==========================================
-   4. ELEMENT STYLES
+   4. ELEMENT STYLES & INTERACTIVE SNAP BRACKETS
    ========================================== */
 .container {
   max-width: var(--body-width);
@@ -125,4 +132,24 @@ body {
 .red, 
 .red * {
   --color: var(--root-theme-red);
+}
+
+.section {
+  /* FIXED: Swapped end out for start to align tops cleanly against the viewport edge track bounds */
+  scroll-snap-align: start;
+  scroll-snap-stop: always;
+}
+
+/* ==========================================
+   5. RESPONSIVE TOUCH OVERRIDES (TOUCHSCREEN ONLY)
+   ========================================== */
+@media (max-width: 768px) and (pointer: coarse) {
+  #AppWapper {
+    /* 
+       FIXED: Activates vertical snapping track logic strictly on mobile viewports.
+       We utilize proximity because it safely absorbs on-screen keyboard transformations 
+       without creating infinite canvas loop glitches.
+    */
+    scroll-snap-type: y proximity; 
+  }
 }

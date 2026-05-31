@@ -1,0 +1,223 @@
+/* ==========================================
+   1. REGULAR INLINE MEDIA TILES SYSTEM
+   ========================================== */
+.mediaTrackContainer {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.baseAsset {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    opacity: 1;
+    will-change: opacity;
+    /* Hardware-accelerated cross-fade transition layout */
+    transition: opacity 0.3s cubic-bezier(0.25, 1, 0.5, 1);
+}
+
+.baseAsset.fading {
+    opacity: 0;
+}
+
+/* CAROUSEL INLINE DOTS OVERLAY */
+.carouselDotsZone {
+    position: absolute;
+    bottom: 12px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    gap: 6px;
+    z-index: 5;
+    background: rgba(0, 0, 0, 0.35);
+    padding: 5px 10px;
+    border-radius: 20px;
+    backdrop-filter: blur(6px);
+    -webkit-backdrop-filter: blur(6px);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.dotTrigger {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.4);
+    border: none;
+    padding: 0;
+    cursor: pointer;
+    transition: background 0.25s cubic-bezier(0.25, 1, 0.5, 1), transform 0.25s ease;
+}
+
+.dotTrigger:hover {
+    background: rgba(255, 255, 255, 0.8);
+}
+
+.dotActive {
+    background: var(--root-theme, #d9b061) !important;
+    transform: scale(1.25);
+}
+
+/* ==========================================
+   2. HORIZONTAL SNAP LIGHTBOX OVERLAYS
+   ========================================== */
+.lightboxOverlay {
+    position: fixed;
+    inset: 0;
+    width: 100vw;
+    height: 100vh;
+    background-color: rgba(0, 0, 0, 0.94); 
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    z-index: 999999;
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+}
+
+.closeBtn {
+    position: absolute;
+    top: 24px;
+    right: 24px;
+    background: none;
+    border: none;
+    color: #ffffff;
+    font-size: 38px;
+    cursor: pointer;
+    line-height: 1;
+    z-index: 100;
+    opacity: 0.6;
+    transition: opacity 0.2s ease;
+}
+
+.closeBtn:hover {
+    opacity: 1;
+}
+
+.lightboxContentFrame {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 85%;
+    height: 80%;
+}
+
+/* FIXED: The Native Horizontal Scroll-Snap Container Track */
+.snapScrollContainer {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: row;
+    overflow-x: auto;
+    /* Enforces rigid fullscreen horizontal alignment locking mechanics */
+    scroll-snap-type: x mandatory; 
+    scroll-behavior: smooth;
+    -webkit-overflow-scrolling: touch;
+}
+
+.snapScrollContainer::-webkit-scrollbar {
+    display: none; /* Disables standard webkit scrollbar bars visibility */
+}
+
+.snapSlideItem {
+    min-width: 100%;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    scroll-snap-align: center; /* Snaps slide right over center viewport area */
+    scroll-snap-stop: always;
+}
+
+.expandedAssetVideo,
+.expandedAssetImg {
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain;
+    border-radius: 12px;
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.6);
+}
+
+/* ==========================================
+   3. DESKTOP NAVIGATION OVERLAY ARROWS
+   ========================================== */
+.navArrow {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    color: #ffffff;
+    font-size: 32px;
+    width: 54px;
+    height: 54px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    z-index: 90;
+    pointer-events: all;
+    transition: background 0.2s, border-color 0.2s, transform 0.2s;
+}
+
+.navArrow:hover {
+    background: rgba(255, 255, 255, 0.15);
+    border-color: var(--root-theme, #d9b061);
+}
+
+.navArrow:active {
+    transform: translateY(-50%) scale(0.95);
+}
+
+.arrowLeft { left: 30px; }
+.arrowRight { right: 30px; }
+
+/* Responsive utility hidden pass disables arrow overlay clutter completely on phones */
+@media (max-width: 768px) {
+    .navArrow {
+        display: none !important;
+    }
+    .lightboxContentFrame {
+        width: 95%;
+    }
+}
+
+/* ==========================================
+   4. LIGHTBOX METADATA & FORCED DOT PACK DETAILS
+   ========================================== */
+.lightboxDots {
+    position: relative !important;
+    bottom: 0 !important;
+    left: 0 !important;
+    transform: none !important;
+    margin-top: 20px;
+    background: rgba(255, 255, 255, 0.05) !important;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.captionBar {
+    margin-top: 16px;
+    color: rgba(255, 255, 255, 0.9);
+    font-size: 12px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 2px; 
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    padding: 8px 20px;
+    border-radius: 30px;
+    text-align: center;
+    max-width: 85%;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}

@@ -1,66 +1,138 @@
-.bottomBar{
+/* ==========================================
+   1. VIEWPORT ANCHOR WRAPPER
+   ========================================== */
+.bottomBar {
+    width: 100%;
     max-width: var(--body-width);
-    width: calc(100% - 20px);
-    background-color: var(--theme-deep);
-    padding: 0px 10px;
-    text-transform: uppercase;
-    font-weight: 700;
+    
+    /* FIXED: Permanently locked to the screen viewport frame using fixed positioning */
     position: fixed;
-    z-index: 2;
-    border-radius: 10px;
+    bottom: 10px; /* Floating clearance matches your Dynamic Island spacing gaps */
     left: 50%;
-    bottom: 10px;
-    transform: translate(-50%,0);
+    
+    /* 
+       FIXED: Combines centering with translateZ(0) to trigger GPU hardware 
+       acceleration. This eliminates fixed positioning calculation lag on phones.
+    */
+    transform: translateX(-50%) translateZ(0);
+    -webkit-transform: translateX(-50%) translateZ(0);
+    will-change: transform;
+    
+    padding: 0 15px;
+    z-index: 100;
     display: flex;
-    align-items: center;
     justify-content: center;
-    box-shadow: 0 0 30px -10px var(--root-theme);
+    align-items: center;
+    pointer-events: none;
 }
 
-.item{
-    --color: var(--theme-text);
-    color: var(--theme-text);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    flex-direction: column;
-    font-size: 8px;
-    padding: 5px;
-    height: 47px;
+/* ==========================================
+   2. FLOATING CRYSTAL INTERFACE CORE
+   ========================================== */
+.navContainer {
+    width: 100%;
+    height: 58px;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
     position: relative;
-    border-radius: 0 0 10px 10px;
+    pointer-events: all;
+    
+    /* Pure Frosted White Crystal Look */
+    
+    background: linear-gradient(135deg, rgb(from var(--theme) r g b / 50%) 0%, rgb(from var(--theme) r g b / 10%) 100%);
+    backdrop-filter: blur(12px); /* 12px blur handles budget phone processors safely */
+    -webkit-backdrop-filter: blur(12px);
+    
+    border-radius: 16px;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    box-shadow: 0 12px 32px rgba(0, 0, 0, 0.15);
 }
 
-.item.active{
-    background-color: var(--root-theme);
+/* ==========================================
+   3. THE METALLIC GLOW ANCHOR LINE
+   ========================================== */
+.indicatorLine {
+    position: absolute;
+    top: 0; 
+    width: 11.111%; 
+    height: 2px;
+    background: var(--root-theme, #d9b061); /* Pure solid theme tokens draw faster than gradients */
+    z-index: 3;
+    pointer-events: none;
+    
+    will-change: left;
+    transition: left 0.35s cubic-bezier(0.25, 1, 0.5, 1);
 }
 
-.item.active::after{
-    content: "";
-    background-color: var(--theme-deep);
-    width: 20px;
-    height: 10px;
-    position: absolute;
-    right: 0;
-    top: 0;
-    border-top-left-radius: 10px;
-    transform: translate(50%, 0);
-    box-shadow: inset 10px 0px 0 0 var(--root-theme);
-    z-index: -1;
+/* ==========================================
+   4. INTERACTIVE MENU NODES
+   ========================================== */
+.item {
+    background: none;
+    border: none;
+    outline: none;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    z-index: 2;
+    cursor: pointer;
+    width: 100%;
+    height: 100%;
+    gap: 4px;
+    transition: transform 0.2s ease;
 }
-.item.active::before{
-    content: "";
-    background-color: var(--theme-deep);
+
+.iconWrapper {
     width: 20px;
-    height: 10px;
-    position: absolute;
-    left: 0;
-    top: 0;
-    border-top-right-radius: 10px;
-    transform: translate(-50%, 0);
-    box-shadow: inset -10px 0px 0 0 var(--root-theme);
-    z-index: -1;
+    height: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transform: translateY(2px);
+    will-change: transform; /* Allocates local memory for smooth icon movement */
+    transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1), color 0.2s ease;
 }
-.item svg{
-    padding: 4px;
+
+.iconWrapper svg {
+    width: 100%;
+    height: 100%;
+    fill: currentColor;
+    color: var(--theme-text);
+    opacity: 0.4; 
+    padding: 0;
+    transition: opacity 0.2s ease;
+}
+
+.label {
+    font-size: 9px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    color: var(--theme-text);
+    opacity: 0.4;
+    transform: scale(0.95);
+    transition: opacity 0.2s ease, transform 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* ==========================================
+   5. PREMIUM ACTIVE STATE TRANSFORMS
+   ========================================== */
+.item.active .iconWrapper {
+    transform: translateY(-2px); 
+}
+
+.item.active .iconWrapper svg {
+    opacity: 1 !important;
+    color: var(--root-theme, #d9b061) !important;
+    filter:drop-shadow(0 0 10px var(--theme-text));
+}
+
+.item.active .label {
+    opacity: 0.95 !important;
+    font-weight: 700;
+    color: var(--root-theme, #d9b061) !important;
+    transform: scale(1) translateY(-1px);
+    text-shadow: 0 0 10px 0 var(--theme-text);
 }

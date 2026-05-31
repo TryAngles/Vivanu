@@ -1,146 +1,320 @@
-.Page{
-    width: 100%;
+/* ==========================================
+   1. PRIMARY VIEWPORT WRAPPER
+   ========================================== */
+.Page {
     width: 100%;
     height: calc(100svh - 1px); 
     overflow: hidden;
     position: relative;
-    backdrop-filter: blur(10px);
-    background-color: rgba(0, 0, 0, 0.153);
-    scroll-snap-align: start;
-    scroll-snap-stop: always;
+    backdrop-filter: blur(16px); 
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.03) 0%, rgba(0, 0, 0, 0.2) 100%);
     will-change: opacity;
 }
-.FirstPage{
+
+.FirstPage {
     backdrop-filter: none;
     height: calc(100svh - 1px);
 }
 
-.FirstPage .wide{
+.FirstPage .wide {
     width: 100%;
     height: calc(100svh - 1px); 
     position: fixed;
-    top: 0;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    transition: opacity 0.5s ease;
     inset: 0;
     pointer-events: none;
+    transition: opacity 0.6s cubic-bezier(0.16, 1, 0.3, 1);
 }
-.FirstPage .wide::before{
+
+.FirstPage .wide::before {
     content: "";
-    width: 100%;
-    height: 100%;
     position: absolute;
-    background: radial-gradient(transparent, rgba(0, 0, 0, 0.57));
+    inset: 0;
+    background: radial-gradient(circle at center, rgba(0, 0, 0, 0.2) 0%, rgba(0, 0, 0, 0.75) 100%);
     z-index: 1;
 }
-.FirstPage .wide img{
+
+.FirstPage .wide img {
     width: 100%;
     height: 100%;
     object-fit: cover;
 }
 
-/* Custom variation for the main container layout */
+/* ==========================================
+   2. CINEMATIC LUXURY IMAGE GALLERY
+   ========================================== */
 .GalleryPage {
     display: flex;
     flex-direction: column;
-    justify-content: center; /* Centers the grid vertically */
-    align-items: center;     /* Centers the grid horizontally */
+    justify-content: center; 
+    align-items: center;     
     height: calc(100svh - 1px);
-    min-height: 50vh;        /* Gives breathing room if there are few images */
-    padding: 60px 20px;
+    min-height: 50vh;        
+    padding: 60px 20px; 
     box-sizing: border-box;
     overflow-y: auto;
 }
 
 .GalleryTitle {
     color: var(--theme-text, #ffffff);
-    margin-bottom: 30px;
-    font-size: 1.5rem;
-    letter-spacing: 1px;
-    opacity: 0.8;
+    margin-bottom: 40px;
+    font-size: 1.6rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 3px; 
+    background: linear-gradient(to right, var(--theme-text) 30%, var(--root-theme) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
 }
 
-/* The actual adaptive Grid configuration */
 .GalleryGrid {
     display: grid;
-    /* Adjust '150px' to match how wide you want each thumbnail cell to be */
     grid-template-columns: repeat(auto-fit, minmax(150px, max-content));
-    grid-gap: 20px;
+    grid-gap: 24px; 
     width: 100%;
-    max-width: 1000px;        /* Prevents layout stretching on ultrawide screens */
-    justify-content: center;  /* Centers smaller thumbnail items horizontally */
-    align-items: center;      /* Centers mismatched sizes inside their grid cells */
+    max-width: 1000px;        
+    justify-content: center;  
+    align-items: center;      
 }
 
-/* Perfect alignment for each small image container */
 .GalleryItem {
-    width: 150px;             /* Keeps sizing uniform for small images */
-    height: 150px;            /* Forces square bounds for orderly layout rules */
+    width: 150px;             
+    height: 150px;            
     display: flex;
     justify-content: center;
     align-items: center;
-    background: rgba(255, 255, 255, 0.04);
-    border-radius: 12px;
-    padding: 10px;
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.05) 0%, rgba(255, 255, 255, 0.01) 100%);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 16px;
+    padding: 12px;
     box-sizing: border-box;
-    transition: background 0.3s ease, transform 0.2s ease;
     overflow: hidden;
+    transition: background 0.4s ease, border-color 0.4s ease, transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.4s ease;
+    box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
 }
 
-/* Hover accent effects */
 .GalleryItem:hover {
-    background: rgba(255, 255, 255, 0.08);
-    transform: translateY(-3px);
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.08) 0%, rgba(255, 255, 255, 0.02) 100%);
+    border-color: var(--root-theme); 
+    transform: translateY(-6px) scale(1.02);
+    box-shadow: 0 20px 38px rgba(0, 0, 0, 0.3), 0 0 15px rgba(219, 176, 97, 0.15);
 }
 
-
-
-
-
-
-.Page .wigits{
+/* ==========================================
+   ASYMMETRIC GRID CANVAS WRAPPER
+   ========================================== */
+.wigits {
     position: absolute;
-    width: calc(90%);
-    height: 85%;
+    width: 90%;
+    height: 82%;
     z-index: 1;
-    top: 50%;
+    top: 48%;
     left: 50%;
-    transform: translate(-50%,-50%);
+    transform: translate(-50%, -50%);
     display: grid;
-    grid-template-columns: repeat(var(--cols),1fr);
-    grid-template-rows: repeat(var(--rows),1fr);
-    grid-row-gap: 0px;
-    grid-column-gap: 10px;
+    grid-template-columns: repeat(var(--cols), 1fr);
+    grid-template-rows: repeat(var(--rows), 1fr);
+    grid-row-gap: 12px;     /* FIXED: Prevents vertical card boxes from sticking together */
+    grid-column-gap: 12px;   /* FIXED: Aligns even gaps between asymmetric items */
     pointer-events: none;
 }
-.Page .wigit{
-    position: relative;
-}
 
-.widget{
-    position: absolute;
+.wigit {
+    position: relative;
     width: 100%;
     height: 100%;
-    border-radius: 20px;
-    pointer-events: auto;
 }
-.widget::before{
+
+/* ==========================================
+   ULTRA-PREMIUM GLASSMORPHIC WIDGET PANELS
+   ========================================== */
+.widget {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    border-radius: 20px; 
+    pointer-events: auto;
+    box-sizing: border-box;
+    overflow: hidden; 
+    
+    /* FIXED: Flex layouts position text fields natively from top to bottom */
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start; /* Aligns data to the top instead of centering and crushing words */
+    align-items: flex-start;     /* Clean left-alignment looks exceptionally high-end */
+    padding: 12px 14px;          /* Luxury defensive cushion gaps */
+    
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.04) 0%, rgba(0, 0, 0, 0.12) 100%);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.4s ease, box-shadow 0.4s ease;
+    box-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.1), 0 8px 32px rgba(0, 0, 0, 0.15);
+}
+
+.widget::before {
     content: "";
     border-radius: 20px;
     position: absolute;
-    backdrop-filter: blur(8px);
-    background: rgba(0, 0, 0, 0.077);
-    width: 100%;
-    height: 100%;
+    inset: 0;
+    backdrop-filter: blur(16px); 
     z-index: -2;
 }
 
-.widget .title{
+.widget::after {
+    content: "";
     position: absolute;
-    bottom: 0%;
-    left: 50%;
-    transform: translate(-50%,120%);
-    color: var(--theme-text);
+    inset: 0;
+    border-radius: 20px;
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.06) 0%, transparent 40%, transparent 100%);
+    z-index: -1;
+    pointer-events: none;
+}
+
+.widget:hover {
+    transform: translateY(-2px);
+    border-color: rgba(255, 255, 255, 0.25);
+    box-shadow: inset 0 1px 2px rgba(255, 255, 255, 0.2), 0 12px 40px rgba(0, 0, 0, 0.25);
+}
+
+/* ==========================================
+   DATA FLOW TYPOGRAPHY & OVERFLOW SAFETY
+   ========================================== */
+.widgetBody {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: flex-start;
+    gap: 4px; 
+    position: relative;
+    z-index: 3;
+    overflow: hidden; /* Stops content from spilling out of boundaries */
+}
+
+.widgetMeta {
+    font-size: 9px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    color: var(--root-theme, #d9b061); /* Gold label tag accents */
+    width: 100%;
+    
+    /* FIXED: Prevents tag titles from wrapping or clipping into ugly half-letters */
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: block;
+}
+
+.widgetHeading {
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--theme-text, #ffffff);
+    line-height: 1.3;
+    width: 100%;
+    margin: 0;
+    padding: 0;
+    
+    /* FIXED: Dynamic multi-line clamping handles variable data sizes safely */
+    display: -webkit-box;
+    -webkit-line-clamp: 2; /* Automatically wraps lines perfectly and drops an ellipsis (...) if squeezed */
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+/* Dynamic adjustment: If a widget is taller, give it clearance for more lines of description */
+@media (min-height: 700px) {
+    .widgetHeading {
+        -webkit-line-clamp: 3;
+    }
+}
+
+/* ==========================================
+   POLYMORPHIC BACKDROP CAROUSEL HOOKS
+   ========================================== */
+.mediaLayerFrame {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 1;
+    pointer-events: auto; /* FIXED: Unlocks click tracks to let you tap photo cards */
+}
+
+/* Dark contrast mask keeps label text highly readable over videos or imagery backgrounds */
+.widgetWithMedia::before {
+    background: rgba(0, 0, 0, 0.5) !important;
+    backdrop-filter: blur(3px);
+    z-index: 2;
+}
+
+.widgetWithMedia .widgetBody {
+    z-index: 3;
+}
+
+.widgetWithMedia .widgetHeading {
+    color: #ffffff !important; /* Locks readable white typography over background imagery */
+    text-shadow: 0 1px 4px rgba(0, 0, 0, 0.4);
+}
+
+/* ==========================================
+   SCATTER COMPOSITING LAYOUT STRATEGIES
+   ========================================== */
+
+/* WHEN IT HAS IMAGES (SPLIT MODE): Pushes text outside below the media frame card */
+.widgetSplitLayout {
+    background: none !important;
+    border: none !important;
+    box-shadow: none !important;
+    overflow: visible !important;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end; /* Text floats gracefully below the card */
+}
+
+.widgetSplitLayout::before,
+.widgetSplitLayout::after {
+    display: none; /* Disables double card effects */
+}
+
+.widgetSplitLayout .mediaLayerFrame {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    border-radius: 20px;
+    overflow: hidden;
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.04) 0%, rgba(0, 0, 0, 0.12) 100%);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15);
+}
+
+.widgetSplitLayout .widgetBody {
+    height: auto;
+    padding-top: 8px; /* Pushes captions neatly beneath the media card */
+    position: relative;
+    z-index: 5;
+}
+
+/* WHEN TEXT-ONLY (INTERNAL MODE): Keeps text clean inside your glassmorphic card bounds */
+.widgetInternalLayout {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: flex-start;
+    padding: 12px 14px;
+}
+
+.widgetInternalLayout .widgetBody {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center; /* Centers short text content vertically within text cards */
+    gap: 4px;
 }

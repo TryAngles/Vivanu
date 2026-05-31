@@ -1,27 +1,42 @@
-import { createContext, useContext, useState, useMemo, useEffect } from "react";
+import { createContext, useContext, useState, useMemo, useEffect} from "react";
 
 const DOMContext = createContext(null);
 
-function DOMContextProvider({ children, scrollRef }) {
+function DOMContextProvider({ children, scrollRef, appRef }) {
     const [isScrollUp, setIsScrollUp] = useState(false);
     const [isScrollLocked, setIsScrollLocked] = useState(false);
+    // 1. ADDED: Centralized state to dynamically disable scroll snapping
+    const [disableSnap, setDisableSnap] = useState(false);
 
+    // 2. FIXED: Unified layout manager effect
     useEffect(() => {
         const scrollContainer = scrollRef?.current;
         if (!scrollContainer) return;
 
+        // Manage overall page scroll lock
         if (isScrollLocked) {
-            // eslint-disable-next-line react-hooks/immutability
-            scrollContainer.style.overflowY = "hidden"; // Locks snap scroll
+            scrollContainer.style.overflowY = "hidden";
         } else {
-            scrollContainer.style.overflowY = "auto";   // Restores snap scroll
+            scrollContainer.style.overflowY = "auto";
         }
-    }, [isScrollLocked, scrollRef]);
 
-    // Handle standard scroll tracking
+        // Manage dynamic snap locking framework state
+        if (disableSnap) {
+            scrollContainer.classList.add("noSnap");
+            scrollContainer.scrollTop = 0; // Lock cleanly to the top during fetches
+        } else {
+            // Tiny 50ms layout pass delay allows elements to safely render before locking snap coordinates
+            const timer = setTimeout(() => {
+                scrollContainer.classList.remove("noSnap");
+            }, 50);
+            return () => clearTimeout(timer);
+        }
+    }, [isScrollLocked, disableSnap, scrollRef]);
+
+    // Directional scroll metric tracker effect loop
     useEffect(() => {
         const scrollContainer = scrollRef?.current;
-        if (!scrollContainer || isScrollLocked) return; // Ignore tracking if locked
+        if (!scrollContainer || isScrollLocked) return;
 
         let lastScrollTop = 0;
         let isTicking = false;
@@ -55,11 +70,13 @@ function DOMContextProvider({ children, scrollRef }) {
         return () => scrollContainer.removeEventListener("scroll", handleScroll);
     }, [scrollRef, isScrollLocked]);
 
-    // 3. EXPOSE: Expose the state setter function to the custom hook consumer
+    // 3. EXPOSE: Expose control configurations cleanly to the downstream custom hook consumer
     const value = useMemo(() => ({ 
         isScrollUp, 
-        preventScroll: setIsScrollLocked 
-    }), [isScrollUp]);
+        preventScroll: setIsScrollLocked,
+        setSnapLock: setDisableSnap, // Added control hook handle shortcut
+        AppRef: appRef
+    }), [isScrollUp , appRef]);
 
     return (
         <DOMContext.Provider value={value}>

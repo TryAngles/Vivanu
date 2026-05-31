@@ -1,20 +1,15 @@
 {
   "id": "1",
   "type": "cosmetic",
-
   "brand": {
     "name": "Maybelline",
     "country": "USA"
   },
-
   "title": "Maybelline Fit Me Matte + Poreless Liquid Foundation",
   "shortTitle": "Fit Me Matte Foundation",
-
   "description": {
     "short": "Lightweight matte liquid foundation for normal to oily skin.",
-    
     "full": "Maybelline Fit Me Matte + Poreless Foundation delivers a natural matte finish while minimizing pores and controlling shine throughout the day. Its lightweight texture blends smoothly into the skin and provides medium buildable coverage suitable for daily wear.",
-
     "bulletPoints": [
       "Natural matte finish",
       "Oil control formula",
@@ -23,7 +18,6 @@
       "Suitable for daily use"
     ]
   },
-
   "pricing": {
     "currency": "INR",
     "mrp": 699,
@@ -31,92 +25,113 @@
     "discountPercent": 21,
     "taxIncluded": true
   },
-
   "stock": {
     "available": true
   },
-
   "media": {
     "thumbnail": {
-      "src": "/thumb.jpg",
+      "src": "thumb.jpg",
       "alt": "Maybelline Fit Me Foundation Thumbnail"
     },
-
-    "wide":{
-        "src":"/wide.webp",
-        "alt":"full view"
+    "wide": {
+      "src": "wide.webp",
+      "alt": "Maybelline Fit Me Campaign Banner"
     },
-
     "gallery": [
-      {
-        "type": "image",
-        "src": "1.jpg",
-        "alt": "Front View"
-      },
-      {
-        "type": "image",
-        "src": "2.jpg",
-        "alt": "Back View"
-      }
+      { "id": "g1", "src": "1.jpg", "highRes": "1.jpg", "alt": "Front Packaging View" },
+      { "id": "g2", "src": "2.jpg", "highRes": "2.jpg", "alt": "Liquid Foundation Texture Close-up" },
+      { "id": "g3", "src": "thumb.jpg", "highRes": "thumb.jpg", "alt": "Shade Swatches on Skin" }
     ]
   },
-
   "shipping": {
     "weight": "120g",
-    "dimensions": {
-      "length": "12cm",
-      "width": "4cm",
-      "height": "3cm"
-    },
+    "dimensions": { "length": "12cm", "width": "4cm", "height": "3cm" },
     "returnable": true,
     "returnWindowDays": 7
   },
-
   "timestamps": {
     "createdAt": "2026-05-20T10:12:00Z",
     "updatedAt": "2026-05-27T16:48:00Z"
   },
-
   "Attribute": [
     {
-      "label": "Brand",
-      "value": "Maybelline",
-      "priority":10
+      "label": "Shade Match Guide",
+      "value": "Find your perfect undertone skin match",
+      "media": [
+        { "src": "1.mp4", "alt": "Live application shade blending demonstration" },
+        { "src": "1.jpg", "alt": "Warm vs Cool vs Neutral undertone matrix map" }
+      ],
+      "ratio": 1.5,
+      "cols": 3,
+      "priority": 100
     },
     {
       "label": "Skin Type",
       "value": "Normal to Oily",
-      "priority":10
+      "media": [],
+      "ratio": 2,
+      "cols": 2,
+      "priority": 90
     },
     {
-      "label": "Finish",
-      "value": "Matte",
-      "priority":10
+      "label": "Finish Look",
+      "value": "Natural Matte Velvet Finish",
+      "media": [
+        { "src": "2.jpg", "alt": "12-hour matte oil control macro zoom viewport" }
+      ],
+      "ratio": 1,
+      "cols": 2,
+      "priority": 85
     },
     {
-      "label": "Coverage",
-      "value": "Medium",
-      "priority":10
+      "label": "Coverage Density",
+      "value": "Medium Buildable Layering",
+      "media": [],
+      "ratio": 1,
+      "cols": 2,
+      "priority": 80
     },
     {
       "label": "Product Form",
-      "value": "Liquid",
-      "priority":10
+      "value": "Liquid Texture Fluid",
+      "media": [],
+      "ratio": 2,
+      "cols": 2,
+      "priority": 75
     },
     {
       "label": "Net Quantity",
-      "value": "30ml",
-      "priority":10
+      "value": "30ml e / 1.0 fl. oz",
+      "media": [],
+      "ratio": 1,
+      "cols": 2,
+      "priority": 70
     },
     {
       "label": "Country of Origin",
-      "value": "India",
-      "priority":10
+      "value": "United States / India Facility",
+      "media": [],
+      "ratio": 1,
+      "cols": 2,
+      "priority": 60
     },
     {
-      "label": "Expiry",
-      "value": "36 Months",
-      "priority":10
+      "label": "Expiry Lifecycle",
+      "value": "36 Months from Manufacturing Batch",
+      "media": [],
+      "ratio": 1,
+      "cols": 2,
+      "priority": 50
+    },
+    {
+      "label": "Safety Certifications",
+      "value": "Non-Comedogenic & Dermatologist Tested",
+      "media": [
+        { "src": "1.jpg", "alt": "Allergy tested, non-pore clogging official seal parameters" }
+      ],
+      "ratio": 1.5,
+      "cols": 3,
+      "priority": 40
     }
   ]
 }

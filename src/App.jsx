@@ -8,7 +8,8 @@ import ErrPage from './pages/fallback/ErrPage'
 import ErrorBoundary from './components/errorBoundary/errorBoundary'
 import { Footer } from './components/Footer/footer'
 import { DOMContextProvider } from './components/domProvider'
-import { useRef } from 'react'
+import { useRef, useEffect } from 'react'
+import { useLocation } from 'react-router-dom';
 
 function App() {
 
@@ -22,11 +23,21 @@ function App() {
 
 function AppLayout({ children }) {
   const wrapperRef = useRef(null);
+  const appRef = useRef(null);
+  const { pathname } = useLocation(); // Tracks what route the user is looking at
+
+  // FIXED: Forces your internal scrolling layer container straight back to the top on page changes
+  useEffect(() => {
+    if (wrapperRef.current) {
+      wrapperRef.current.scrollTop = 0;
+    }
+  }, [pathname]); // Fires instantly every single time a path changes
+
   return (
-    <DOMContextProvider scrollRef={wrapperRef}>
+    <DOMContextProvider scrollRef={wrapperRef} appRef={appRef}>
       <div id='DOM' className='dark'>
         <div id='AppWapper' ref={wrapperRef}>
-          <div className="app">
+          <div className="app section" ref={appRef}>
             <ErrorBoundary>
               <Navbar />
               <Routes>

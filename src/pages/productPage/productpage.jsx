@@ -1,10 +1,9 @@
-// ProductPage.jsx
-import { useCallback,  useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import FirstPage from "./firstPage";
 import ErrPage from "../fallback/ErrPage";
 import Styles from "./productpage.module.css";
-import { Image } from "../../components/micro/media";
+import { Media } from "../../components/micro/media";
 import { fetchJSON } from "../../lib/fetchJSON";
 import Product from "../../lib/core/product.class";
 import LoadingPage from "../loading/loading";
@@ -13,24 +12,24 @@ import React from "react";
 import { ProductContextProvider, useProduct } from "./ProductContextProvider";
 import { useDOM } from "../../components/domProvider";
 
-
 export default function ProductPage() {
     const { id } = useParams();
     const [product, setProduct] = useState(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
+    const { setSnapLock } = useDOM();
+    useEffect(() => {
+        setSnapLock(loading);
+        return () => setSnapLock(false);
+    }, [loading, setSnapLock]);
 
     useEffect(() => {
         let mounted = true;
-
         (async () => {
             try {
                 setLoading(true);
                 setError(null);
-
-                const data = await fetchJSON(
-                    `/data/products/${id}/index.json`
-                );
+                const data = await fetchJSON(`/data/products/${id}/index.json`);
                 if (!mounted) return;
                 setProduct(new Product(data));
             } catch (e) {
@@ -41,22 +40,15 @@ export default function ProductPage() {
                 mounted && setLoading(false);
             }
         })();
-
-        return () => mounted = false;
-
+        return () => { mounted = false; };
     }, [id]);
 
-
-
-    if (loading)
+    if (loading) 
         return <LoadingPage message="fetching Product" />;
-    if (error)
-        return (
-            <ErrPage code={error.status} message={error.message} />
-        );
+    if (error) return <ErrPage code={error.status} message={error.message} />;
 
     return (
-        <div className={Styles.ProductPage}>
+        <div className={`${Styles.ProductPage}`}>
             <ProductContextProvider productData={product}>
                 <FirstPage />
                 <ProductMeta />
@@ -66,30 +58,26 @@ export default function ProductPage() {
 }
 
 const ProductMeta = React.memo(() => {
-    const { product, isExpanded, setIsExpanded} = useProduct();
-    const {isScrollUp,preventScroll} = useDOM()
+    const { isExpanded, setIsExpanded } = useProduct();
+    const { isScrollUp, preventScroll } = useDOM();
 
     useEffect(() => {
         preventScroll(isExpanded);
         return () => preventScroll(false);
     }, [isExpanded, preventScroll]);
 
-    console.log(product, product.media.base)
-
     const toggle = useCallback(() => setIsExpanded((v) => !v), [setIsExpanded]);
 
     return (
-        <div className={`${Styles.productBox} 
-        ${isExpanded ? Styles.expanded : ""}
-         ${isScrollUp? Styles.minimised:""}`}>
-            <div className={`${Styles.innerProductBox}`}>
+        <div className={`${Styles.productBox} ${isExpanded ? Styles.expanded : ""} ${isScrollUp ? Styles.minimised : ""}`}>
+            <div className={Styles.innerProductBox}>
                 <div className={Styles.main}>
                     <ProductInfo />
                     <ProductContent />
                 </div>
                 <div className={Styles.bottom}>
                     <span className={Styles.viewMore} onClick={toggle}>
-                        {isExpanded?"View less":"View more"}
+                        {isExpanded ? "View less" : "View more"}
                     </span>
                     <button className={Styles.addToCart}>
                         Add to Cart
@@ -98,17 +86,18 @@ const ProductMeta = React.memo(() => {
             </div>
         </div>
     );
-})
+});
 
 const ProductInfo = React.memo(() => {
-    const { product,setIsExpanded } = useProduct();
+    const { product, setIsExpanded } = useProduct();
     const toggle = useCallback(() => setIsExpanded((v) => !v), [setIsExpanded]);
+    
     return (
         <div className={Styles.info}>
             <div className={Styles.meta} onClick={toggle}>
                 <div className={Styles.name}>{product.title}</div>
                 <div className={Styles.label}>
-                    {product.data.brand?.name} ( {product.data.brand?.country} )
+                    {product.data.brand?.name} ({product.data.brand?.country})
                 </div>
                 <ProductStock inStock={product.inStock} />
                 <div className={Styles.type}>
@@ -116,15 +105,12 @@ const ProductInfo = React.memo(() => {
                 </div>
                 <ProductPrice price={product.data.pricing} />
             </div>
-
             <div className={Styles.thumbnail}>
-                <Image expandable={true} src={product.thumbnail} base={product.media.base} />
+                <Media expandable={true} src={product.thumbnail} base={product.media.base} alt={product.title} />
             </div>
-
         </div>
-    )
-})
-
+    );
+});
 
 const ProductContent = React.memo(() => {
     const { product } = useProduct();
@@ -134,33 +120,33 @@ const ProductContent = React.memo(() => {
                 <span className={Styles.title}>{product.data.shortTitle}</span>
                 <p>{product.data.description.short}</p>
                 <p>{product.data.description.full}</p>
-                <p><ul>
-                    {product.data.description.bulletPoints.map(
-                        (point) => <li>{point}</li>)}
-                </ul></p>
+                <ul className={Styles.bulletList}>
+                    {product.data.description.bulletPoints.map((point, index) => (
+                        <li key={index}>{point}</li>
+                    ))}
+                </ul>
             </div>
         </div>
-    )
-})
+    );
+});
 
-
-const ProductStock = React.memo((inStock) => {
+const ProductStock = React.memo(({ inStock }) => {
     return (
         <div className={`${Styles.label} ${Styles.color} ${inStock ? "green" : "red"}`}>
             {inStock ? "Stock Available" : "Out of Stock"}
         </div>
-    )
-})
+    );
+});
 
 const ProductPrice = React.memo(({ price }) => {
-    return (<>
+    return (
         <div className={Styles.price}>
             ₹{price.sellingPrice}
-            <mrp>{price.mrp}</mrp>
-            <discount className={`green`}>
+            <span className={Styles.mrp}>{price.mrp}</span>
+            <span className={`${Styles.discount} green`}>
                 <DownArrowIcon />
                 {price.discountPercent}%
-            </discount>
+            </span>
         </div>
-    </>)
-})
+    );
+});

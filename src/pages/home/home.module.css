@@ -1,139 +1,204 @@
-.home{
+.home {
     width: 100%;
 }
 
-.catigaries{
-    display: flex;
-    align-items: center;
-    justify-content: space-around;
-    overflow-x: auto;
-    min-width: 100%;
+/* ==========================================
+   HORIZONTAL CATEGORIES PANEL
+   ========================================== */
+.categories {
     width: 100%;
+    padding: 15px 0;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
 }
-.catigaries::-webkit-scrollbar{
+
+.sectionTitle {
+    font-size: 14px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    padding-left: 20px;
+    margin-bottom: 12px;
+    opacity: 0.8;
+}
+
+.categoriesScroller {
+    display: flex;
+    gap: 20px;
+    overflow-x: auto;
+    width: 100%;
+    padding: 5px 20px;
+    -webkit-overflow-scrolling: touch;
+    scroll-snap-type: x proximity;
+}
+
+.categoriesScroller::-webkit-scrollbar {
     display: none;
 }
-.catigary{
-    padding: 10px;
-    min-width: 150px;
-    margin: 0 20px;
+
+.category {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    min-width: 100px; /* Slightly wider spacing looks cleaner on desktop */
+    cursor: pointer;
+    scroll-snap-align: start;
 }
-.catigary .thumbnail{
-    border-radius: 20px;
+
+.category .thumbnail {
+    width: 84px;
+    height: 84px;
+    border-radius: 50%;
     overflow: hidden;
     display: flex;
     align-items: center;
     justify-content: center;
-    box-shadow: 0 0 10px -5px var(--theme-light);
-    aspect-ratio: 1 / 1;
+    border: 2px solid var(--theme-light);
     background-color: var(--theme-deep);
+    transition: transform 0.2s cubic-bezier(0.25, 1, 0.5, 1), border-color 0.2s;
 }
-.catigary .title{
+
+.category:hover .thumbnail {
+    transform: scale(1.08);
+    border-color: var(--root-theme);
+}
+
+.category .title {
     text-align: center;
-    font-size: 16px;
-    padding: 10px;
-}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-.section{
+    font-size: 12px;
+    font-weight: 500;
+    margin-top: 8px;
+    opacity: 0.8;
     width: 100%;
-    padding: 10px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow: hidden;
 }
-.section .heading{
+
+/* ==========================================
+   GRID CONTENT SECTION
+   ========================================== */
+.section {
     width: 100%;
-    text-align: center;
-    font-size: 18px;
-    text-transform: uppercase;
-    padding: 10px;
-}
-.section .content{
-    display: grid;
-    grid-template-columns: repeat(6, auto);
     padding: 20px;
-    
 }
-@media (max-width:1330px) {
-    .section .content{
-        grid-template-columns: repeat(5,auto);
-    }
+
+.section .heading {
+    width: 100%;
+    font-size: 16px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    padding: 10px 0 20px 0;
+    opacity: 0.9;
 }
-@media (max-width:940px) {
-    .section .content{
-        grid-template-columns: repeat(4,auto);
-    }
+
+.gridContent {
+    display: grid;
+    /* FIXED: Restored your exact responsive grid column calculation strategy */
+    grid-template-columns: repeat(6, minmax(0, 1fr));
+    gap: 20px;
+    width: 100%;
 }
-@media (max-width:819px) {
-    .section .content{
-        grid-template-columns: repeat(3,auto);
-    }
+
+/* ==========================================
+   RESPONSIVE LAYOUT RESPONSIVE GRID BREAKPOINTS
+   ========================================== */
+@media (max-width: 1330px) {
+    .gridContent { grid-template-columns: repeat(5, minmax(0, 1fr)); }
 }
-@media (max-width:587px) {
-    .section .content{
-        grid-template-columns: repeat(2,auto);
+@media (max-width: 940px) {
+    .gridContent { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+}
+@media (max-width: 819px) {
+    .gridContent { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+}
+@media (max-width: 587px) {
+    .gridContent { 
+        grid-template-columns: repeat(2, minmax(0, 1fr)); 
+        gap: 12px; /* Tighter gaps look better on small mobile phone panels */
     }
 }
 
-
-
-
-.card{
-    margin: 10px;
+/* ==========================================
+   PREMIUM PRODUCT PROFILE CARDS
+   ========================================== */
+.card {
     background-color: var(--theme-deep);
-    box-shadow: 0 0 10px -5px var(--theme-light);
+    border: 1px solid var(--theme-light);
     display: flex;
     flex-direction: column;
     position: relative;
-    border-radius: 4px;
+    border-radius: 12px;
     overflow: hidden;
-}
-.card .thumbnail{
-    aspect-ratio: 1 / 1;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
-.card .metadata{
+.card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 24px rgba(0,0,0,0.12);
+}
+
+.card .thumbnail {
     width: 100%;
-    padding: 10px;
+    aspect-ratio: 1 / 1;
+    overflow: hidden;
+    background-color: var(--theme);
 }
-.cart .name{
-    text-wrap: nowrap;
+
+.card .thumbnail img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.3s ease;
 }
-.card .price{
+
+.card .metadata {
+    width: 100%;
+    padding: 14px;
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+}
+
+.card .name {
+    font-size: 14px;
+    font-weight: 500;
+    line-height: 1.4;
+    height: 40px; 
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    opacity: 0.85;
+}
+
+.card .price {
     font-size: 20px;
     font-weight: 900;
-    padding: 10px 0px;
+    padding: 10px 0;
+    color: var(--theme-text);
 }
-.card .option{
+
+.card .option {
     width: 100%;
-    padding: 10px;
-    background-color: var(--theme);
+    padding: 12px;
+    background-color: transparent;
+    color: var(--theme-text);
     text-align: center;
-    text-shadow: 0 0 10px var(--theme);
-    border: 1px solid var(--root-theme);
-    transition: 0.1s;
-    border-radius: 3px;
+    font-size: 13px;
+    font-weight: 600;
+    border: 1px solid var(--theme-light);
+    border-radius: 8px;
+    cursor: pointer;
+    margin-top: auto; 
+    transition: all 0.2s ease;
 }
-.card .option:hover{
+
+.card .option:hover {
     background-color: var(--root-theme);
+    border-color: var(--root-theme);
+    color: #000000;
+    box-shadow: 0 4px 12px rgba(217, 176, 97, 0.3);
 }
